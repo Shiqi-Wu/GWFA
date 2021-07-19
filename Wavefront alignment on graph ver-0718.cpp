@@ -174,25 +174,20 @@ void GraphExtend(int h, int u, Wavefront& S, Graph& q, string& t)
 		}
 		while (k && h < m - 1)
 		{
+			Wavefront* pp = new Wavefront;
+			pp->h = h;
+			pp->u = u;
+			pp->next = NULL;
+			p->next = pp;
+			p = p->next;
 			if (tran(q.node[k->Index].base[0]) != tran(t[h]))
-			{
-				Wavefront* pp = new Wavefront;
-				pp->h = h;
-				pp->u = u;
-				pp->next = NULL;
-				p->next = pp;
-				p = p->next;
-			}
-			else
-			{
 				GraphExtend(h + 1, k->Index, S, q, t);
-			}
 			k = k->next;
 		}
 	}
 }
 
-void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, string& t, int s, penalty p, bool M_in[m+1][n+1], bool I_in[m+1][n+1], bool D_in[m+1][n+1])
+void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, string& t, int s, penalty p, bool M_in[m + 1][n + 1], bool I_in[m + 1][n + 1], bool D_in[m + 1][n + 1])
 {
 	Wavefront* w;
 	Wavefront* new_w;
@@ -319,20 +314,20 @@ void WFGraphAlign(Graph& q, string& t, penalty p)
 		w->u = n;
 		w->next = NULL;
 		w->back = NULL;
-		if (M_in[m][n])
-			break;
 		temp = M[s].next;
 		while (temp)
 		{
 			cout << s << '\t' << temp->h << '\t' << temp->u << endl;
 			temp = temp->next;
 		}
+		if (M_in[m][n])
+			break;	
 		s++;
 		WavefrontNext(M, I, D, q, t, s, p, M_in, I_in, D_in);
 	}
-	while (w)		//Backtrace
+	/*while (w)		//Backtrace
 	{
 		cout << w->h << "\t" << w->u << endl;
 		w = w->back;
-	}
+	}*/
 }
