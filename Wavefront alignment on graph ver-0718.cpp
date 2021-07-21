@@ -1,12 +1,11 @@
 #include <iostream>
 #include <string.h>
-#define m 5
+#define m 4
 #define n 5
 
 #define MAX_VERTEX_NUM 10
 
 #define MAX_SCORE 20
-
 
 int tran(char a) {
 	int c;
@@ -33,16 +32,10 @@ typedef struct
 	int e;
 }penalty;
 
-typedef struct NextNode
+typedef struct Node
 {
-	int Index;
-	NextNode* next;
-}NextNode;
-
-typedef struct
-{
-	char base[2];
-	NextNode* next;
+	int base;
+	Node* next;
 }Node;
 
 typedef struct
@@ -67,44 +60,69 @@ typedef struct
 	Wavefront* next;
 }WaveStruct;
 
+Graph GraphInit(bool V[n][n], string& s)
+{
+	Graph q;
+	q.num = n;
+	q.node[0].base = -1;
+	for (int i = 1; i <= n; i++)
+	{
+		q.node[i].base = tran(s[i - 1]);
+	}
+	Node* p = new Node;
+	p->base = 1;
+	p->next = NULL;
+	q.node[0].next = p;
+
+
+	for (int i = 1; i <= n; i++)
+	{
+		q.node[i].next = NULL;
+		for (int j = 1; j <= n; j++)
+		{
+			if (V[i - 1][j - 1] == 1)
+			{
+				p = new Node;
+				p->base = j;
+				p->next = q.node[i].next;
+				q.node[i].next = p;
+			}
+		}
+	}
+	return q;
+}
+
 void InitWavefront(Wavefront& w);
 void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1]);
-void WavefrontExtend(WaveStruct& M_s, Graph q, string& t, bool M_in[m + 1][n + 1]);
-void GraphExtend(int h, int u, Wavefront& S, Graph& q, string& t);
-void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, string& t, int s, penalty p, bool M_in[m + 1][n + 1], bool I_in[m + 1][n + 1], bool D_in[m + 1][n + 1]);
-void WFGraphAlign(Graph& q, string& t, penalty p);
+void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1]);
+void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[]);
+void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int tran_string[], int s, penalty p, bool M_in[m + 1][n + 1], bool I_in[m + 1][n + 1], bool D_in[m + 1][n + 1]);
+void WFGraphAlign(Graph& q, int tran_string[], penalty p);
 
 int main()
 {
 	Graph q;
-	q.num = 5;
-	strcpy_s(q.node[1].base, "A");
-	strcpy_s(q.node[2].base, "C");
-	strcpy_s(q.node[3].base, "G");
-	strcpy_s(q.node[4].base, "T");
-	strcpy_s(q.node[5].base, "C");
-	NextNode* next_node; NextNode* x;
-	next_node = new NextNode;
-	next_node->Index = 1; next_node->next = NULL; q.node[0].next = next_node;
-	next_node = new NextNode;
-	next_node->Index = 2; next_node->next = NULL; q.node[1].next = next_node;
-	x = next_node;
-	next_node = new NextNode;
-	next_node->Index = 3; next_node->next = NULL; x->next = next_node;
-	next_node = new NextNode;
-	next_node->Index = 3; next_node->next = NULL; q.node[2].next = next_node;
-	next_node = new NextNode;
-	next_node->Index = 4; next_node->next = NULL; q.node[3].next = next_node;
-	next_node = new NextNode;
-	next_node->Index = 5; next_node->next = NULL; q.node[4].next = next_node;
-	next_node = new NextNode;
-	next_node->Index = 2; next_node->next = NULL; q.node[5].next = next_node;
+	q.num = n;
+	string s = "CATTA";
 
-	string t = "ATCCA";
+	bool V[n][n] = {
+	{0,1,0,0,0},
+	{0,0,1,0,0},
+	{1,0,0,1,0},
+	{0,0,0,0,1},
+	{0,0,1,0,0}
+	};
 
-	penalty p = { 4,6,2 };
+	q = GraphInit(V, s);
+	string t = "TATT";
+	int tran_string[m];
+	for (int i = 0; i < m; i++)
+	{
+		tran_string[i] = tran(t[i]);
+	}
+	penalty p = { 1,0,1 };
 
-	WFGraphAlign(q, t, p);
+	WFGraphAlign(q, tran_string, p);
 
 	return 0;
 }
@@ -129,7 +147,7 @@ void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1])	//add th
 	}
 }
 
-void WavefrontExtend(WaveStruct& M_s, Graph q, string& t, bool M_in[m + 1][n + 1])
+void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1])
 {
 	Wavefront S;
 	InitWavefront(S);
@@ -137,57 +155,47 @@ void WavefrontExtend(WaveStruct& M_s, Graph q, string& t, bool M_in[m + 1][n + 1
 	p = M_s.next;
 	while (p)
 	{
-		GraphExtend(p->h, p->u, S, q, t);
+		GraphExtend(p->h, p->u, S, q, tran_string);
 		//DelWavefront(*p, M_s);
 		p = p->next;
 	}
 
-	Wavefront* pS;
-	pS = &S;
+	Wavefront* pS; Wavefront* d;
+	pS = &S; d = pS->next;
 	while (pS->next)
 	{
-		pS = pS->next;
-		pS->back = p;
+		pS = d; d = d->next;
+		//cout << pS->h << pS->u << endl;
 		AddWavefront(*pS, M_s, M_in);
 	}
+	pS = &S;
 }
 
-void GraphExtend(int h, int u, Wavefront& S, Graph& q, string& t)
+void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])
 {
+
 	if (q.node[u].next)
 	{
-		NextNode* k;
+		Node* k;
 		k = q.node[u].next;
 		Wavefront* p;
 		p = &S;
-		while (p->next)
-			p = p->next;
-		//int m = size(t);
-		if (!(k && h < m - 1))
+
+		Wavefront* pp = new Wavefront;
+		pp->h = h;
+		pp->u = u;
+		pp->next = p->next;
+		p->next = pp;
+		while (k && h <= m - 1)
 		{
-			Wavefront* pp = new Wavefront;
-			pp->h = h;
-			pp->u = u;
-			pp->next = NULL;
-			p->next = pp;
-			p = p->next;
-		}
-		while (k && h < m - 1)
-		{
-			Wavefront* pp = new Wavefront;
-			pp->h = h;
-			pp->u = u;
-			pp->next = NULL;
-			p->next = pp;
-			p = p->next;
-			if (tran(q.node[k->Index].base[0]) != tran(t[h]))
-				GraphExtend(h + 1, k->Index, S, q, t);
+			if (q.node[k->base].base == tran_string[h])
+				GraphExtend(h + 1, k->base, S, q, tran_string);
 			k = k->next;
 		}
 	}
 }
 
-void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, string& t, int s, penalty p, bool M_in[m + 1][n + 1], bool I_in[m + 1][n + 1], bool D_in[m + 1][n + 1])
+void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int tran_string[], int s, penalty p, bool M_in[m + 1][n + 1], bool I_in[m + 1][n + 1], bool D_in[m + 1][n + 1])
 {
 	Wavefront* w;
 	Wavefront* new_w;
@@ -203,13 +211,13 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, str
 			new_w->back = w;
 			AddWavefront(*new_w, I[s], I_in);
 			AddWavefront(*new_w, M[s], M_in);
-			NextNode* next_node;
+			Node* next_node;
 			next_node = q.node[w->u].next;
 			while (next_node)
 			{
 				new_w = new Wavefront;
 				new_w->h = w->h;
-				new_w->u = next_node->Index;
+				new_w->u = next_node->base;
 				new_w->next = NULL;
 				new_w->back = w;
 				AddWavefront(*new_w, D[s], D_in);
@@ -237,13 +245,13 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, str
 		w = D[s - p.e].next;
 		while (w)
 		{
-			NextNode* next_node;
+			Node* next_node;
 			next_node = q.node[w->u].next;
 			while (next_node)
 			{
 				new_w = new Wavefront;
 				new_w->h = w->h;
-				new_w->u = next_node->Index;
+				new_w->u = next_node->base;
 				new_w->next = NULL;
 				new_w->back = w;
 				AddWavefront(*new_w, D[s], D_in);
@@ -258,12 +266,12 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, str
 		w = M[s - p.x].next;
 		while (w)
 		{
-			NextNode* next_node = q.node[w->u].next;
+			Node* next_node = q.node[w->u].next;
 			while (next_node)
 			{
 				new_w = new Wavefront;
 				new_w->h = w->h + 1;
-				new_w->u = next_node->Index;
+				new_w->u = next_node->base;
 				new_w->next = NULL;
 				new_w->back = w;
 				AddWavefront(*new_w, M[s], M_in);
@@ -274,7 +282,7 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, str
 	}
 }
 
-void WFGraphAlign(Graph& q, string& t, penalty p)
+void WFGraphAlign(Graph& q, int tran_string[], penalty p)
 {
 	//int m; int n; 
 	int s;
@@ -303,12 +311,15 @@ void WFGraphAlign(Graph& q, string& t, penalty p)
 		D[k].score = k; D[k].next = NULL;
 	}
 	Wavefront* w; Wavefront* temp = new Wavefront;
-	w = new Wavefront;
-	w->h = 0; w->u = 0; w->next = NULL;
-	AddWavefront(*w, M[0], M_in);
+	for (int k = 0; k <= n; k++)
+	{
+		w = new Wavefront;
+		w->h = 0; w->u = k; w->next = NULL;
+		AddWavefront(*w, M[0], M_in);
+	}
 	while (1)
 	{
-		WavefrontExtend(M[s], q, t, M_in);
+		WavefrontExtend(M[s], q, tran_string, M_in);
 		w = new Wavefront;
 		w->h = m;
 		w->u = n;
@@ -321,9 +332,9 @@ void WFGraphAlign(Graph& q, string& t, penalty p)
 			temp = temp->next;
 		}
 		if (M_in[m][n])
-			break;	
+			break;
 		s++;
-		WavefrontNext(M, I, D, q, t, s, p, M_in, I_in, D_in);
+		WavefrontNext(M, I, D, q, tran_string, s, p, M_in, I_in, D_in);
 	}
 	/*while (w)		//Backtrace
 	{
