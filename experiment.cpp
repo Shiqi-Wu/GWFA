@@ -2,8 +2,8 @@
 #include <string.h>
 
 
-#define m 20
-#define n 20
+#define m 15
+#define n 15
 
 #define MAX_VERTEX_NUM 10
 
@@ -130,7 +130,7 @@ int main()
 		}
 
 	}
-	
+
 	for (int i = 0; i < m; i++)
 	{
 		for (int j = 0; j < n; j++)
@@ -168,8 +168,8 @@ int main()
 			}
 		}
 	}
-	
-	
+
+
 	penalty pen = { 1,0,1 };
 
 	WFGraphAlign(q, s, pen);

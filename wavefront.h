@@ -38,7 +38,7 @@ typedef struct Node
 typedef struct
 {
 	int num;
-	Node node[n+1];
+	Node node[n + 1];
 }Graph;
 
 using namespace std;
@@ -114,7 +114,7 @@ void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1])	//add th
 		M_in[w.h][w.u] = 1;
 		w.next = q;
 		s.next = &w;
-		new_Matrix[w.h - 1][w.u - 1] = s.score> new_Matrix[w.h - 1][w.u - 1]? new_Matrix[w.h - 1][w.u - 1]:s.score;
+		new_Matrix[w.h - 1][w.u - 1] = s.score > new_Matrix[w.h - 1][w.u - 1] ? new_Matrix[w.h - 1][w.u - 1] : s.score;
 	}
 }
 
@@ -159,7 +159,7 @@ void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])
 		p->next = pp;
 		while (k && h <= m - 1)
 		{
-			if (q.node[k->base].base == tran_string[h])
+			if (q.node[k->base].base == tran_string[h] && h + 1 <= m)
 				GraphExtend(h + 1, k->base, S, q, tran_string);
 			k = k->next;
 		}
@@ -180,8 +180,11 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 			new_w->u = w->u;
 			new_w->next = NULL;
 			new_w->back = w;
-			AddWavefront(*new_w, I[s], I_in);
-			AddWavefront(*new_w, M[s], M_in);
+			if (new_w->h <= m)
+			{
+				AddWavefront(*new_w, I[s], I_in);
+				AddWavefront(*new_w, M[s], M_in);
+			}
 			Node* next_node;
 			next_node = q.node[w->u].next;
 			while (next_node)
@@ -209,8 +212,11 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 			new_w->u = w->u;
 			new_w->next = NULL;
 			new_w->back = w;
-			AddWavefront(*new_w, I[s], I_in);
-			AddWavefront(*new_w, M[s], M_in);
+			if (new_w->h <= m)
+			{
+				AddWavefront(*new_w, I[s], I_in);
+				AddWavefront(*new_w, M[s], M_in);
+			}
 			w = w->next;
 		}
 		w = D[s - p.e].next;
@@ -245,7 +251,8 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 				new_w->u = next_node->base;
 				new_w->next = NULL;
 				new_w->back = w;
-				AddWavefront(*new_w, M[s], M_in);
+				if (new_w->h <= m)
+					AddWavefront(*new_w, M[s], M_in);
 				next_node = next_node->next;
 			}
 			w = w->next;
@@ -302,16 +309,16 @@ void WFGraphAlign(Graph& q, int tran_string[], penalty p)
 			cout << s << '\t' << temp->h << '\t' << temp->u << endl;
 			temp = temp->next;
 		}
+		/*
 		int k = 0;
 		for (; k < n; k++)
 			if (!M_in[m][k])
 				break;
 		if (k == n)
 			break;
-		/*
+		*/
 		if (M_in[m][n])
 			break;
-			*/
 		s++;
 		WavefrontNext(M, I, D, q, tran_string, s, p, M_in, I_in, D_in);
 	}
