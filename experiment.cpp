@@ -2,12 +2,12 @@
 #include <string.h>
 
 
-#define m 15
-#define n 15
+#define m 30
+#define n 30
 
-#define MAX_VERTEX_NUM 10
+#define MAX_VERTEX_NUM 30
 
-#define MAX_SCORE 20
+#define MAX_SCORE 30
 
 using namespace std;
 
@@ -43,6 +43,7 @@ int main()
 	}
 
 	/* Create random string */
+	
 	int s[m]; int t[n];
 	srand((int)time(0));
 	for (int k = 0; k < m; k++)
@@ -59,6 +60,7 @@ int main()
 	cout << endl;
 
 	/* Navarro */
+	/*
 	int DP_Matrix[m][n];
 	int temp;
 	for (int i = 0; i < m; i++)
@@ -139,7 +141,7 @@ int main()
 		}
 		cout << endl;
 	}
-
+	*/
 	/* Wavefront on graph */
 	Graph q;
 	q.num = n;
