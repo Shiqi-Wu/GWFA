@@ -123,7 +123,7 @@ void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1])	//add th
 	}
 }
 
-void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1])
+void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1])		//To match the next position
 {
 	Wavefront S;
 	InitWavefront(S);
@@ -147,7 +147,7 @@ void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 
 	pS = &S;
 }
 
-void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])
+void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])		//To match the next position
 {
 
 	if (q.node[u].next)
@@ -279,7 +279,7 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 	}
 }
 
-void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStruct I[], WaveStruct D[], int gap, int s)
+void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStruct I[], WaveStruct D[], int gap, int s)		//To reduce some point according to sequence index
 {
 	if (M[s].max_h - gap > 0)
 	{
@@ -362,7 +362,7 @@ void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStr
 	}
 }
 
-void WFGraphAlign(Graph& q, int tran_string[], penalty p, int gap)
+void WFGraphAlign(Graph& q, int tran_string[], penalty p, int gap)		//Alignment function
 {
 	//int m; int n; 
 	int s;

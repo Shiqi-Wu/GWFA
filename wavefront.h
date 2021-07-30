@@ -60,7 +60,7 @@ typedef struct
 	Wavefront* next;
 }WaveStruct;
 
-Graph GraphInit(bool V[n][n], string& s)
+Graph GraphInit(bool V[n][n], string& s)		//Create a graph according to matrix
 {
 	Graph q;
 	q.num = n;
@@ -100,7 +100,7 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 void WFGraphAlign(Graph& q, int tran_string[], penalty p);
 
 
-void InitWavefront(Wavefront& w)
+void InitWavefront(Wavefront& w)		//Create a wavefront
 {
 	w.h = -1;
 	w.u = -1;
@@ -117,11 +117,11 @@ void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1])	//add th
 		M_in[w.h][w.u] = 1;
 		w.next = q;
 		s.next = &w;
-		new_Matrix[w.h - 1][w.u - 1] = s.score > new_Matrix[w.h - 1][w.u - 1] ? new_Matrix[w.h - 1][w.u - 1] : s.score;
+		//new_Matrix[w.h - 1][w.u - 1] = s.score> new_Matrix[w.h - 1][w.u - 1]? new_Matrix[w.h - 1][w.u - 1]:s.score;
 	}
 }
 
-void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1])
+void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1])		//To match the next position
 {
 	Wavefront S;
 	InitWavefront(S);
@@ -145,7 +145,7 @@ void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 
 	pS = &S;
 }
 
-void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])
+void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])		//To match the next position
 {
 
 	if (q.node[u].next)
@@ -275,7 +275,7 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 		}
 	}
 }
-void WFGraphAlign(Graph& q, int tran_string[], penalty p)
+void WFGraphAlign(Graph& q, int tran_string[], penalty p)		//alignment function
 {
 	//int m; int n; 
 	int s;
