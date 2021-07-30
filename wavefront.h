@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string.h>
 
+bool M_in[m + 1][n + 1];
+bool I_in[m + 1][n + 1];
+bool D_in[m + 1][n + 1];
 
 using namespace std;
 
@@ -179,11 +182,14 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 			new_w->h = w->h + 1;
 			new_w->u = w->u;
 			new_w->next = NULL;
-			new_w->back = w;
+			Wavefront* new_w2 = new Wavefront;
+			new_w2->h = w->h + 1;
+			new_w2->u = w->u;
+			new_w2->next = NULL;
 			if (new_w->h <= m)
 			{
 				AddWavefront(*new_w, I[s], I_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 			}
 			Node* next_node;
 			next_node = q.node[w->u].next;
@@ -193,9 +199,12 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 				new_w->h = w->h;
 				new_w->u = next_node->base;
 				new_w->next = NULL;
-				new_w->back = w;
+				Wavefront* new_w2 = new Wavefront;
+				new_w2->h = w->h + 1;
+				new_w2->u = w->u;
+				new_w2->next = NULL;
 				AddWavefront(*new_w, D[s], D_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 				next_node = next_node->next;
 			}
 			w = w->next;
@@ -211,11 +220,15 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 			new_w->h = w->h + 1;
 			new_w->u = w->u;
 			new_w->next = NULL;
-			new_w->back = w;
+			//new_w->back = w;
+			Wavefront* new_w2 = new Wavefront;
+			new_w2->h = w->h + 1;
+			new_w2->u = w->u;
+			new_w2->next = NULL;
 			if (new_w->h <= m)
 			{
 				AddWavefront(*new_w, I[s], I_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 			}
 			w = w->next;
 		}
@@ -230,9 +243,12 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 				new_w->h = w->h;
 				new_w->u = next_node->base;
 				new_w->next = NULL;
-				new_w->back = w;
+				Wavefront* new_w2 = new Wavefront;
+				new_w2->h = w->h + 1;
+				new_w2->u = w->u;
+				new_w2->next = NULL;
 				AddWavefront(*new_w, D[s], D_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 				next_node = next_node->next;
 			}
 			w = w->next;
@@ -259,7 +275,6 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 		}
 	}
 }
-
 void WFGraphAlign(Graph& q, int tran_string[], penalty p)
 {
 	//int m; int n; 
@@ -289,12 +304,17 @@ void WFGraphAlign(Graph& q, int tran_string[], penalty p)
 		D[k].score = k; D[k].next = NULL;
 	}
 	Wavefront* w; Wavefront* temp = new Wavefront;
+	/*
 	for (int k = 0; k <= n; k++)
 	{
 		w = new Wavefront;
 		w->h = 0; w->u = k; w->next = NULL;
 		AddWavefront(*w, M[0], M_in);
 	}
+	*/
+	w = new Wavefront;
+	w->h = 0; w->u = 0; w->next = NULL;
+	AddWavefront(*w, M[0], M_in);
 	while (1)
 	{
 		WavefrontExtend(M[s], q, tran_string, M_in);

@@ -2,22 +2,20 @@
 #include <string.h>
 
 
-#define m 30
-#define n 30
+#define m 10
+#define n 10
 
 #define MAX_VERTEX_NUM 30
 
-#define MAX_SCORE 30
+#define MAX_SCORE 50
 
 using namespace std;
 
 int new_Matrix[m][n];
 
-bool M_in[m + 1][n + 1];
-bool I_in[m + 1][n + 1];
-bool D_in[m + 1][n + 1];
 
-#include "wavefront.h"
+
+#include "wavefront_reduce.h"
 
 int main()
 {
@@ -43,7 +41,7 @@ int main()
 	}
 
 	/* Create random string */
-	
+
 	int s[m]; int t[n];
 	srand((int)time(0));
 	for (int k = 0; k < m; k++)
@@ -172,18 +170,20 @@ int main()
 	}
 
 
-	penalty pen = { 1,0,1 };
+	penalty pen = { 4,6,2 };
 
-	WFGraphAlign(q, s, pen);
-
+	WFGraphAlign(q, s, pen, 2);
+	/*
 	for (int i = 0; i < m; i++)
 	{
 		for (int j = 0; j < n; j++)
 		{
-			cout << DP_Matrix[i][j] - new_Matrix[i][j] << '\t';
+			cout << new_Matrix[i][j] << '\t';
+			//cout << DP_Matrix[i][j] - new_Matrix[i][j] << '\t';
 		}
 		cout << endl;
 	}
+	*/
 
 	return 0;
 }

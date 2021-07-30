@@ -5,7 +5,7 @@ bool M_in[m + 1][n + 1];
 bool I_in[m + 1][n + 1];
 bool D_in[m + 1][n + 1];
 
-using namespace std; 
+using namespace std;
 
 int tran(char a) {
 	int c;
@@ -185,11 +185,14 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 			new_w->h = w->h + 1;
 			new_w->u = w->u;
 			new_w->next = NULL;
-			new_w->back = w;
+			Wavefront* new_w2 = new Wavefront;
+			new_w2->h = w->h + 1;
+			new_w2->u = w->u;
+			new_w2->next = NULL;
 			if (new_w->h <= m)
 			{
 				AddWavefront(*new_w, I[s], I_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 			}
 			Node* next_node;
 			next_node = q.node[w->u].next;
@@ -199,9 +202,12 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 				new_w->h = w->h;
 				new_w->u = next_node->base;
 				new_w->next = NULL;
-				new_w->back = w;
+				Wavefront* new_w2 = new Wavefront;
+				new_w2->h = w->h + 1;
+				new_w2->u = w->u;
+				new_w2->next = NULL;
 				AddWavefront(*new_w, D[s], D_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 				next_node = next_node->next;
 			}
 			w = w->next;
@@ -217,11 +223,15 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 			new_w->h = w->h + 1;
 			new_w->u = w->u;
 			new_w->next = NULL;
-			new_w->back = w;
+			//new_w->back = w;
+			Wavefront* new_w2 = new Wavefront;
+			new_w2->h = w->h + 1;
+			new_w2->u = w->u;
+			new_w2->next = NULL;
 			if (new_w->h <= m)
 			{
 				AddWavefront(*new_w, I[s], I_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 			}
 			w = w->next;
 		}
@@ -236,9 +246,12 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 				new_w->h = w->h;
 				new_w->u = next_node->base;
 				new_w->next = NULL;
-				new_w->back = w;
+				Wavefront* new_w2 = new Wavefront;
+				new_w2->h = w->h + 1;
+				new_w2->u = w->u;
+				new_w2->next = NULL;
 				AddWavefront(*new_w, D[s], D_in);
-				AddWavefront(*new_w, M[s], M_in);
+				AddWavefront(*new_w2, M[s], M_in);
 				next_node = next_node->next;
 			}
 			w = w->next;
@@ -266,7 +279,7 @@ void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int
 	}
 }
 
-void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStruct I[], Wavefront D[], int gap, int s)
+void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStruct I[], WaveStruct D[], int gap, int s)
 {
 	if (M[s].max_h - gap > 0)
 	{
@@ -281,18 +294,20 @@ void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStr
 					Wavefront* temp;
 					temp = p->next;
 					p->h = temp->h;
-					p->u = temp->h;
+					p->u = temp->u;
 					p->next = temp->next;
-					delete(temp);
+					//delete(temp);
 					temp = NULL;
 				}
 				else
 				{
 					M[s].next = NULL;
-					delete(p);
+					//delete(p);
 					p = NULL;
 				}
 			}
+			if (p)
+				p = p->next;
 		}
 		p = I[s].next;
 		while (p)
@@ -304,7 +319,7 @@ void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStr
 					Wavefront* temp;
 					temp = p->next;
 					p->h = temp->h;
-					p->u = temp->h;
+					p->u = temp->u;
 					p->next = temp->next;
 					delete(temp);
 					temp = NULL;
@@ -316,6 +331,8 @@ void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStr
 					p = NULL;
 				}
 			}
+			if (p)
+				p = p->next;
 		}
 		p = D[s].next;
 		while (p)
@@ -327,7 +344,7 @@ void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStr
 					Wavefront* temp;
 					temp = p->next;
 					p->h = temp->h;
-					p->u = temp->h;
+					p->u = temp->u;
 					p->next = temp->next;
 					delete(temp);
 					temp = NULL;
@@ -339,6 +356,8 @@ void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStr
 					p = NULL;
 				}
 			}
+			if (p)
+				p = p->next;
 		}
 	}
 }
