@@ -2,12 +2,12 @@
 #include <string.h>
 
 
-#define m 10
-#define n 10
+#define m 100
+#define n 90
 
 #define MAX_VERTEX_NUM 30
 
-#define MAX_SCORE 50
+#define MAX_SCORE 1000
 
 using namespace std;
 
@@ -172,7 +172,7 @@ int main()
 
 	penalty pen = { 4,6,2 };
 
-	WFGraphAlign(q, s, pen, 2);
+	WFGraphAlign(q, s, pen, 100);
 	/*
 	for (int i = 0; i < m; i++)
 	{

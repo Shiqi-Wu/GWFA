@@ -5,7 +5,7 @@ bool M_in[m + 1][n + 1];
 bool I_in[m + 1][n + 1];
 bool D_in[m + 1][n + 1];
 
-using namespace std;
+using namespace std; 
 
 int tran(char a) {
 	int c;
@@ -96,7 +96,7 @@ Graph GraphInit(bool V[n][n], string& s)
 void InitWavefront(Wavefront& w);
 void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1]);
 void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1]);
-void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[]);
+void GraphExtend(int h, int u, WaveStruct& S, Graph& q, int tran_string[]);
 void WavefrontNext(WaveStruct M[], WaveStruct I[], WaveStruct D[], Graph& q, int tran_string[], int s, penalty p, bool M_in[m + 1][n + 1], bool I_in[m + 1][n + 1], bool D_in[m + 1][n + 1]);
 void WFGraphAlign(Graph& q, int tran_string[], penalty p, int gap);
 void WFReduction(Graph& q, int tran_string[], penalty p, WaveStruct M[], WaveStruct I[], Wavefront D[], int gap, int s); void WFGraphAlign(Graph& q, int tran_string[], penalty p, int gap);
@@ -125,17 +125,17 @@ void AddWavefront(Wavefront& w, WaveStruct& s, bool M_in[m + 1][n + 1])	//add th
 
 void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 1][n + 1])		//To match the next position
 {
-	Wavefront S;
-	InitWavefront(S);
+	//Wavefront S;
+	//InitWavefront(S);
 	Wavefront* p;
 	p = M_s.next;
 	while (p)
 	{
-		GraphExtend(p->h, p->u, S, q, tran_string);
+		GraphExtend(p->h, p->u, M_s, q, tran_string);
 		//DelWavefront(*p, M_s);
 		p = p->next;
 	}
-
+	/*
 	Wavefront* pS; Wavefront* d;
 	pS = &S; d = pS->next;
 	while (pS->next)
@@ -145,26 +145,24 @@ void WavefrontExtend(WaveStruct& M_s, Graph q, int tran_string[], bool M_in[m + 
 		AddWavefront(*pS, M_s, M_in);
 	}
 	pS = &S;
+	*/
 }
 
-void GraphExtend(int h, int u, Wavefront& S, Graph& q, int tran_string[])		//To match the next position
+void GraphExtend(int h, int u, WaveStruct& S, Graph& q, int tran_string[])		//To match the next position
 {
 
 	if (q.node[u].next)
 	{
 		Node* k;
 		k = q.node[u].next;
-		Wavefront* p;
-		p = &S;
 
 		Wavefront* pp = new Wavefront;
 		pp->h = h;
 		pp->u = u;
-		pp->next = p->next;
-		p->next = pp;
+		AddWavefront(*pp, S, M_in);
 		while (k && h <= m - 1)
 		{
-			if (q.node[k->base].base == tran_string[h] && h + 1 <= m)
+			if (q.node[k->base].base == tran_string[h] && h + 1 <= m && !M_in[h+1][k->base])
 				GraphExtend(h + 1, k->base, S, q, tran_string);
 			k = k->next;
 		}
