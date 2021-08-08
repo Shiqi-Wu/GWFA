@@ -410,27 +410,18 @@ void WFGraphAlign(Graph& q, int tran_string[], penalty p, int gap)		//Alignment 
 		w->next = NULL;
 		w->back = NULL;
 		temp = M[s].next;
+		/*
 		while (temp)
 		{
 			cout << s << '\t' << temp->h << '\t' << temp->u << endl;
 			temp = temp->next;
 		}
-		/*
-		int k = 0;
-		for (; k < n; k++)
-			if (!M_in[m][k])
-				break;
-		if (k == n)
-			break;
 		*/
 		if (M_in[m][n])
 			break;
 		s++;
+		//cout << s << endl;
 		WavefrontNext(M, I, D, q, tran_string, s, p, M_in, I_in, D_in);
 	}
-	/*while (w)		//Backtrace
-	{
-		cout << w->h << "\t" << w->u << endl;
-		w = w->back;
-	}*/
+	cout << s << endl;;
 }
