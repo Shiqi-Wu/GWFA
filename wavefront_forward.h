@@ -1,104 +1,8 @@
-#include <iostream>
-#include <string.h>
+#include "struct.h"
+#include "extend.h"
 
-bool M_in[m + 1][n + 1];
-bool I_in[m + 1][n + 1];
-bool D_in[m + 1][n + 1];
-
-int tran(char a) {
-	int c;
-	if (a == 'A') {
-		c = 0;
-	}
-	if (a == 'G') {
-		c = 1;
-	}
-	if (a == 'C') {
-		c = 2;
-	}
-	if (a == 'T')
-	{
-		c = 3;
-	}
-	return c;
-}
-
-typedef struct
-{
-	int x;
-	int o;
-	int e;
-}penalty;
-
-typedef struct Node
-{
-	int base;
-	int next[MAX_EDGE];
-	int edgenum;
-}Node;
-
-typedef struct Graph
-{
-	int num;
-	Node node[n + 1];
-}Graph;
-
-typedef struct Index
-{
-	int h;
-	int u;
-};
-
-typedef struct Wavefront
-{
-	int score;
-	Index index[MAX_WAVEFRONT];
-	int index_num;
-};
-
-void AddIndex(Wavefront& M, int h, int u, bool in[m + 1][n + 1]);
-Wavefront WF_Extend(Wavefront& M, Graph& q, string& t);
-Wavefront Extend(int h, int u, Wavefront& M, Graph& q, string& t);
 void WF_Next(Wavefront& M, Wavefront& D, Wavefront& I, Wavefront M_temp[], Wavefront D_temp[], Wavefront I_temp[], int s, penalty p, Graph& q, string& t);
-
-/* Match case */
-Wavefront WF_Extend(Wavefront& M, Graph& q, string& t)
-{
-	int k = M.index_num;
-	for (int i = 0; i < k; i++)
-	{
-		int u = M.index[i].u;
-		int h = M.index[i].h;
-		Extend(h, u, M, q, t);
-	}
-	return M;
-}
-
-Wavefront Extend(int h, int u, Wavefront& M, Graph& q, string& t)
-{
-	for (int j = 0; j < q.node[u].edgenum; j++)
-	{
-		int v = q.node[u].next[j];
-		if (q.node[v].base == tran(t[h]))
-		{
-			AddIndex(M, h + 1, v, M_in);
-			Extend(h + 1, v, M, q, t);
-		}
-	}
-	return M;
-}
-
-/* Add Index to wavefront_index */
-void AddIndex(Wavefront& M, int h, int u, bool in[m + 1][n + 1])
-{
-	if (!in[h][u])
-	{
-		in[h][u] = 1;
-		M.index_num++;
-		M.index[M.index_num - 1].h = h;
-		M.index[M.index_num - 1].u = u;
-	}
-}
+void WF_Graph_Align(Graph& q, string& t, penalty p);
 
 /* Other cases */
 void WF_Next(Wavefront& M, Wavefront& D, Wavefront& I, Wavefront M_temp[], Wavefront D_temp[], Wavefront I_temp[], int s, penalty p, Graph& q, string& t)
@@ -161,12 +65,6 @@ void WF_Next(Wavefront& M, Wavefront& D, Wavefront& I, Wavefront M_temp[], Wavef
 		D_temp[e_hash].score = s + p.e;
 	if (I_temp[e_hash].index_num > 0)
 		I_temp[e_hash].score = s + p.e;
-}
-
-void InitWavefront(Wavefront& M)
-{
-	M.score = -1;
-	M.index_num = 0;
 }
 
 void WF_Graph_Align(Graph& q, string& t, penalty p)
