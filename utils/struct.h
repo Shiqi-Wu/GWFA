@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string.h>
 
 #define DEFINE_AFFINE_PENALTY typedef struct penalty	\
@@ -21,13 +20,13 @@
 	int edgenum;	\
 }Node;
 
-#define DEFINE_GRAPH(pattern_size) typedef struct Graph	\
+#define DEFINE_GRAPH(MAX_NODE) typedef struct Graph	\
 {	\
 	int num;	\
-	Node node[pattern_size + 1];	\
+	Node node[20000];	\
 }Graph;
 
-#define DEFINE_INDEX	typedef struct Index	\
+#define DEFINE_INDEX typedef struct Index	\
 {	\
 	int h;	\
 	int u;	\

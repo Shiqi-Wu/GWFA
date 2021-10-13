@@ -4,9 +4,10 @@
 #include<stdlib.h>
 
 #include<stdbool.h>
-#include<string.h>
+#include<string>
 #include<time.h>
-#include<cmath>
+#include<math.h>
+#include<climits>
 
 using namespace std;
 
