@@ -13,8 +13,21 @@ clock_t start_time,end_time;
 DEFINE_INDEX;
 
 
-int main()
+int main(int argc, char *argv[])
 {
+	int mismatch=0; int gap=0;
+	char *temp=argv[1];
+	while(temp)
+	{
+		mismatch=mismatch*10+int(*temp)-48;
+		temp++;
+	}
+	temp=argv[2];
+	while(temp)
+	{
+		gap=gap*10+int(*temp)-48;
+		temp++;
+	}
 	const int MAX_EDGE = 1;
 	const int MAX_NODE = 15000;
 	
@@ -41,28 +54,7 @@ int main()
 		//printf("%d\t%d\n", q->node[i-1].next[0],q->node[i].base);
 		q->node[i-1].edgenum=1;
 	}
-	/*
-	for(int i=0;i<sequence_size;i++)
-	{
-		printf("%d\t%d\n", i, tran(sequence[i]));
-	}
-	*/
-	/*
-	q->node[0].edgenum = 1;
-	q->node[0].next[0] = 1;
-	q->node[1].edgenum = 1;
-	q->node[1].next[0] = 2;
-	q->node[2].edgenum = 2;
-	q->node[2].next[0] = 3;
-	q->node[2].next[1] = 4;
-	q->node[3].edgenum = 2;
-	q->node[3].next[0] = 1;
-	q->node[3].next[1] = 4;
-	q->node[4].edgenum = 1;
-	q->node[4].next[0] = 5;
-	q->node[5].edgenum = 1;
-	q->node[5].next[0] = 1;
-	*/
+
 	int Bool_size = (sequence_size + 1) * (sequence_size + 1);
 	bool* D = MALLOC(Bool_size, bool);
 	penalty p = { 13,17 };
@@ -70,7 +62,7 @@ int main()
 	Wavefront_set* H = MALLOC(hash_size, Wavefront_set);
 	start_time=clock();	
 	int score = GWF_EXTEND(t, q, p, sequence_size, pattern_size, D, H, hash_size);
-	end_time=clock();		//程序结束用时
+	end_time=clock();
 	double endtime=(double)(end_time-start_time)/CLOCKS_PER_SEC;
 	cout<<"Total time:"<<endtime<<endl;		//s为单位
 	cout<<"Total time:"<<endtime*1000<<"ms"<<endl;	//ms为单位
