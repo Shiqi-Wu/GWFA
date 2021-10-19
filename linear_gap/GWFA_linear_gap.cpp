@@ -1,6 +1,6 @@
 class GWF {
 public:
-	Wavefront_set EXTEND(Wavefront_set original_wavefront_set, bool D[], int pattern_size, int sequence_size, char* t, Graph q)
+	Wavefront_set EXTEND(Wavefront_set original_wavefront_set, int pattern_size, int sequence_size, bool* D, char* t, Graph q)
 	{
 		Index temp_index;
 		Wavefront_set final_wavefront_set;
@@ -33,7 +33,7 @@ public:
 		}
 		return final_wavefront_set;
 	}
-	void LINEAR_NEXT(Wavefront_set temp_wavefront_set[], bool D[], char* t, int sequence_size, int pattern_size, penalty penalty, int score, int Hash_size, Graph q)
+	void LINEAR_NEXT(Wavefront_set temp_wavefront_set[], char* t, int sequence_size, int pattern_size, bool* D, penalty penalty, int score, int Hash_size, Graph q)
 	{
 		int H_position = score % Hash_size;
 		int hash_gap = (score + penalty.gap) % Hash_size;
@@ -63,7 +63,7 @@ public:
 		temp_wavefront_set[hash_gap].score = score + penalty.gap;
 		temp_wavefront_set[hash_mismatch].score = score + penalty.mismatch;
 	}
-	int LINEAR_ALIGN(char* t, Graph& q, penalty p, int sequence_size, int pattern_size, bool* D, Wavefront_set* H, int hash_size)
+	int LINEAR_ALIGN(char* t, Graph& q, penalty p, int sequence_size, int pattern_size,int final_node,bool*D, Wavefront_set* H, int hash_size)
 	{
 		/* Initialize Wavefront */
 		static const int Hash_size = prime(MAX(p.gap, p.mismatch));
@@ -87,7 +87,7 @@ public:
 			int s_position = score % Hash_size;
 
 			/* Extend */
-			H[s_position] = EXTEND(H[s_position], D, pattern_size, sequence_size, t, q);
+			H[s_position] = EXTEND(H[s_position], pattern_size, sequence_size,D,t, q);
 
 			/* Output */
 			
@@ -96,11 +96,11 @@ public:
 			
 
 			/* Termination */
-			if (D[(pattern_size + 1) * (sequence_size + 1) - 1] == 1)
+			if (D[(final_node + 1) * (sequence_size + 1) - 1] == 1)
 				break;
 
 			/* Next */
-			LINEAR_NEXT(H, D, t, sequence_size, pattern_size, p, score, Hash_size, q);
+			LINEAR_NEXT(H, t, sequence_size, pattern_size, D, p, score, Hash_size, q);
 
 			/* Find the next score*/
 			H[s_position].index_num = 0;
@@ -121,4 +121,4 @@ public:
 
 GWF Wavefront;
 
-#define GWF_EXTEND(t, q, p, pattern_size, sequence_size, D, H, hash_size) Wavefront.LINEAR_ALIGN(t, *q, p, pattern_size, sequence_size, D, H, hash_size)
+#define GWF_LINEAR(t, q, p, pattern_size, sequence_size,final_node,D, H, hash_size) Wavefront.LINEAR_ALIGN(t, *q, p, pattern_size, sequence_size,final_node, D, H, hash_size)
