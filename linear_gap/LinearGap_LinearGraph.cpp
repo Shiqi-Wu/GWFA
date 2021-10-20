@@ -13,7 +13,7 @@ clock_t start_time,end_time;
 DEFINE_INDEX;
 
 
-int main(int argc, char *argv[])
+int main()
 {
 	/*
 	int mismatch=0; int gap=0;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	DEFINE_WAVEFRONT_SET(500000);
 	const int pattern_size = 15000;
 	const int sequence_size = 15000;
-
+	int final_node=15000;
 	#include"GWFA_linear_gap.cpp"
 	
 	//char sequence[6] = "ACTGC";
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	int hash_size = prime(MAX(p.mismatch, p.gap));
 	Wavefront_set* H = MALLOC(hash_size, Wavefront_set);
 	start_time=clock();	
-	int score = GWF_EXTEND(t, q, p, sequence_size, pattern_size, D, H, hash_size);
+	int score = GWF_LINEAR(t, q, p, sequence_size, pattern_size,final_node, D, H, hash_size);
 	end_time=clock();
 	double endtime=(double)(end_time-start_time)/CLOCKS_PER_SEC;
 	cout<<"Total time:"<<endtime<<endl;		//s为单位
