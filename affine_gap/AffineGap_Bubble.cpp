@@ -64,7 +64,7 @@ int main()
 	Wavefront_set* Index_set_D = MALLOC(hash_size, Wavefront_set);
 	Wavefront_set* Index_set_I = MALLOC(hash_size, Wavefront_set);
 	start_time=clock();	
-	int score = GWF_EXTEND(t, q, p, sequence_size, pattern_size, M, D, I, Index_set_M, Index_set_D, Index_set_I, hash_size);
+	int score = GWF_AFFINE(t, q, p, sequence_size, pattern_size, M, D, I, Index_set_M, Index_set_D, Index_set_I, hash_size);
 	end_time=clock();
 	double endtime=(double)(end_time-start_time)/CLOCKS_PER_SEC;
 	cout<<"Total time:"<<endtime<<endl;		//s为单位
