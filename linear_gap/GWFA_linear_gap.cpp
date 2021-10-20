@@ -1,4 +1,4 @@
-class GWF {
+class GWF_LINEAR_ALIGN {
 public:
 	Wavefront_set EXTEND(Wavefront_set original_wavefront_set, int pattern_size, int sequence_size, bool* D, char* t, Graph q)
 	{
@@ -48,12 +48,12 @@ public:
 			}
 			for (int j = 0; j < q.node[temp_index.u].edgenum; j++)
 			{
-				if (!D[temp_index.h * pattern_size + q.node[temp_index.u].next[j]]&& tran(t[temp_index.h])!=q.node[q.node[temp_index.u].next[j]].base)
+				if (!D[temp_index.h * (pattern_size + 1) + q.node[temp_index.u].next[j]]&& tran(t[temp_index.h])!=q.node[q.node[temp_index.u].next[j]].base)
 				{
 					temp_wavefront_set[hash_gap].index[temp_wavefront_set[hash_gap].index_num] = { temp_index.h,q.node[temp_index.u].next[j] };
 					temp_wavefront_set[hash_gap].index_num++;
 				}
-				if (temp_index.h <= sequence_size - 1 && !D[(temp_index.h + 1) * pattern_size + q.node[temp_index.u].next[j]])
+				if (temp_index.h <= sequence_size - 1 && !D[(temp_index.h + 1) * (pattern_size + 1) + q.node[temp_index.u].next[j]])
 				{
 					temp_wavefront_set[hash_mismatch].index[temp_wavefront_set[hash_mismatch].index_num] = { temp_index.h + 1,q.node[temp_index.u].next[j] };
 					temp_wavefront_set[hash_mismatch].index_num++;
@@ -96,7 +96,7 @@ public:
 			
 
 			/* Termination */
-			if (D[(final_node + 1) * (sequence_size + 1) - 1] == 1)
+			if (D[(pattern_size + 1) * sequence_size + final_node] == 1)
 				break;
 
 			/* Next */
@@ -119,6 +119,6 @@ public:
 	}
 };
 
-GWF Wavefront;
+GWF_LINEAR_ALIGN Wavefront;
 
 #define GWF_LINEAR(t, q, p, pattern_size, sequence_size,final_node,D, H, hash_size) Wavefront.LINEAR_ALIGN(t, *q, p, pattern_size, sequence_size,final_node, D, H, hash_size)

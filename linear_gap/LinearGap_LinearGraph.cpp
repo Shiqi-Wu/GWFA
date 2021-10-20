@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 		q->node[i-1].edgenum=1;
 	}
 
-	int Bool_size = (sequence_size + 1) * (sequence_size + 1);
+	int Bool_size = (sequence_size + 1) * (pattern_size + 1);
 	bool* D = MALLOC(Bool_size, bool);
 	penalty p = { 13,17 };
 	int hash_size = prime(MAX(p.mismatch, p.gap));
