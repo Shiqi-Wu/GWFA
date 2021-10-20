@@ -9,7 +9,7 @@
 using namespace std;
 
 clock_t start_time,end_time;
-bool *D;
+bool *M; bool *D; bool *I;
 
 DEFINE_INDEX;
 
@@ -25,8 +25,8 @@ int main()
 	const int pattern_size = 16500;
 	const int sequence_size = 15000;
 
-	#include"GWFA_linear_gap.cpp"
-
+	#include"GWFA_affine_gap.cpp"
+	
 	char* t = sequence;
 	Graph *q=MALLOC(1,Graph);
 	q->num = pattern_size;
@@ -55,23 +55,25 @@ int main()
 		}
 	}
 	int Bool_size = (sequence_size + 1) * (pattern_size + 1);
-	D = MALLOC(Bool_size, bool);
-	penalty p = { 4,3 };
-	int hash_size = prime(MAX(p.mismatch, p.gap));
-	Wavefront_set* H = MALLOC(hash_size, Wavefront_set);
-	start_time=clock();
-	int score = GWF_EXTEND(t, q, p, sequence_size, pattern_size, final_node, D, H, hash_size);
+	bool* M = MALLOC(Bool_size, bool);
+	bool* D = MALLOC(Bool_size, bool);
+	bool* I = MALLOC(Bool_size, bool);
+	penalty p = { 4,6,2 };
+	int hash_size = prime(MAX(p.mismatch, p.gap_open+p.gap_extention));
+	Wavefront_set* Index_set_M = MALLOC(hash_size, Wavefront_set);
+	Wavefront_set* Index_set_D = MALLOC(hash_size, Wavefront_set);
+	Wavefront_set* Index_set_I = MALLOC(hash_size, Wavefront_set);
+	start_time=clock();	
+	int score = GWF_EXTEND(t, q, p, sequence_size, pattern_size, M, D, I, Index_set_M, Index_set_D, Index_set_I, hash_size);
 	end_time=clock();
 	double endtime=(double)(end_time-start_time)/CLOCKS_PER_SEC;
-	cout<<"Total time:"<<endtime<<endl;
-	cout<<"Total time:"<<endtime*1000<<"ms"<<endl;
+	cout<<"Total time:"<<endtime<<endl;		//s为单位
+	cout<<"Total time:"<<endtime*1000<<"ms"<<endl;	//ms为单位
 	free(q);
-	free(H);
-	free(D);
+	free(M);free(D);free(I);
+	free(Index_set_M);free(Index_set_D);free(Index_set_I);
 	printf("The best alignment score is: %d", score);
+	
 	return 0;
 }
-		
-
-
-
+	

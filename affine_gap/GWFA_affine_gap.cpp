@@ -1,5 +1,3 @@
-#define INDEX_ADD(set,h,u) set.index[set.index_num].h=h;set.index[set.index_num].u=u;set.index_num++;
-
 class GWF_AFFINE_ALIGN {
 public:
 	Wavefront_set EXTEND(Wavefront_set original_wavefront_set_M, Wavefront_set original_wavefront_set_D, Wavefront_set original_wavefront_set_I, int pattern_size, int sequence_size, bool* M, bool* D, bool* I, char* t, Graph q)

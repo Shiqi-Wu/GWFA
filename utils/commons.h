@@ -91,3 +91,4 @@ int tran(char a)
 	}
 	return c;
 }
+

@@ -39,6 +39,9 @@
 	int index_num;	\
 };
 
+#define INDEX_ADD(set,h,u) set.index[set.index_num].h=h;set.index[set.index_num].u=u;set.index_num++;
+
+
 /*int tran(char a) {
 	int c;
 	if (a == 'A') {
