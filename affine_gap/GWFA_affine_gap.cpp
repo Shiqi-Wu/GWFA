@@ -161,4 +161,4 @@ public:
 
 GWF_AFFINE_ALIGN Wavefront;
 
-#define GWF_AFFINE(t, q, p, sequence_size, pattern_size,final_node, M, D, I, Indexset_M, Indexset_D, Indexset_I, hash_size) Wavefront.LINEAR_ALIGN(t, *q, p, sequence_size, pattern_size,final_node, M, D, I, Indexset_M, Indexset_D, Indexset_I, hash_size)
+#define GWF_AFFINE(t, q, p, sequence_size, pattern_size,final_node, M, D, I, Indexset_M, Indexset_D, Indexset_I, hash_size) Wavefront.AFFINE_ALIGN(t, *q, p, sequence_size, pattern_size,final_node, M, D, I, Indexset_M, Indexset_D, Indexset_I, hash_size)
