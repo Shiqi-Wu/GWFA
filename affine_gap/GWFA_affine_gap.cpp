@@ -139,7 +139,7 @@ public:
 				break;
 
 			/* Next */
-			LINEAR_NEXT(Indexset_M, Indexset_D, Indexset_I, sequence_size, pattern_size, M, D, I, p, score, Hash_size, t, q);
+			AFFINE_NEXT(Indexset_M, Indexset_D, Indexset_I, sequence_size, pattern_size, M, D, I, p, score, Hash_size, t, q);
 
 			/* Find the next score*/
 			Indexset_M[s_position].index_num = 0; Indexset_M[s_position].score = -1;
