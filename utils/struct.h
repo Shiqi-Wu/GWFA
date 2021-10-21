@@ -23,7 +23,7 @@
 #define DEFINE_GRAPH(MAX_NODE) typedef struct Graph	\
 {	\
 	int num;	\
-	Node node[20000];	\
+	Node node[MAX_NODE];	\
 }Graph;
 
 #define DEFINE_INDEX typedef struct Index	\
@@ -39,7 +39,21 @@
 	int index_num;	\
 };
 
-#define INDEX_ADD(set,h,u) set.index[set.index_num].h=h;set.index[set.index_num].u=u;set.index_num++;
+#define DEFINE_AFFINE_WAVEFRONT_SET typedef struct Affine_wavefront_set	\
+{	\
+	int score;	\
+	Wavefront_set M_set;	\
+	Wavefront_set D_set;	\
+	Wavefront_set I_set;	\
+}
+
+#define DEFINE_AFFINE_STATUS typedef struct Affine_status {	\
+	bool* M;	\
+	bool* D;	\
+	bool* I;	\
+}
+
+#define INDEX_ADD(set,h_value,u_value) set.index[set.index_num].h=h_value;set.index[set.index_num].u=u_value;set.index_num++;
 
 
 /*int tran(char a) {

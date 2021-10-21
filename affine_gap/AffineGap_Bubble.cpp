@@ -27,7 +27,9 @@ int main()
 
 	#include"GWFA_affine_gap.cpp"
 	
-	char* t = sequence;
+	int* t = MALLOC(sequence_size,int);
+	for (int i=0;i<sequence_size;i++)
+		t[i]=sequence[i];
 	Graph *q=MALLOC(1,Graph);
 	q->num = pattern_size;
 	q->node[0].base = -1;
