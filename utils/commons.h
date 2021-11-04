@@ -9,7 +9,7 @@
 #include<math.h>
 #include<climits>
 
-using namespace std;
+//using namespace std;
 
 /*
 Special Characters
