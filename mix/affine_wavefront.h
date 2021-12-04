@@ -42,8 +42,6 @@ typedef struct{
 }affine_wavefront_t; */
 
 typedef struct{
-	//Dimensions
-	//int fragment_rank;
 	bool* null;
 	//int fragment_length;		//Pattern length
 	int num_wavefronts;		//Total number of allocatable wavefronts
