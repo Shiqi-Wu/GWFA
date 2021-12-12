@@ -13,6 +13,7 @@ typedef struct{
 }node_t;
 
 typedef struct{
+    int pattern_length;
     int node_num;
     node_t* node;
 }graph_t;

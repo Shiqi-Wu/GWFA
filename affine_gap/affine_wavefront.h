@@ -70,11 +70,15 @@ typedef struct{
     int text_length;        //Text length
     //Limits
     int max_penalty;        //MAX(mismatch_penalty, single_gap_penalty)
-    vector_t* index_set;            //index sets
+    affine_wavefront_index_t* index_set;            //index sets
+    int index_set_num;
     affine_wavefront_t*** mwavefronts;           //M-wavefronts
     affine_wavefront_t** iwavefronts;           //I-wavefronts
-    affine_wavefront_t** dwavefronts;           //D-wavefronts
-    affine_wavefronts_penalties_t penalties;        //Penalties parameters
+    affine_wavefront_t** dwavefronts;          //D-wavefronts
+    affine_wavefront_t wavefront_null;
+    affine_wavefront_t* wavefronts_mem;
+    affine_wavefront_t* wavefronts_current;
+    affine_wavefront_penalties_t penalties;      //Penalties parameters
     mm_allocator_t* mm_allocator;
     int num_wavefronts;
 } affine_wavefronts_t;
@@ -94,5 +98,20 @@ typedef struct{
     affine_wavefront_t* out_dwavefront;
 } affine_wavefront_set;
 
+void affine_wavefronts_allocate_wavefront_null(affine_wavefronts_t* const affine_wavefronts);
+
+void affine_wavefront_allocate_wavefront_components(affine_wavefronts_t* const affine_wavefronts);
+
+affine_wavefronts_t* affine_wavefronts_new(
+    const int pattern_length,
+    const int text_length,
+    affine_wavefront_penalties_t* const penalties,
+    mm_allocator_t* const mm_allocator);
+
+void affine_wavefronts_clear(affine_wavefronts_t* const affine_wavefronts);
+
+void affine_wavefronts_delete(affine_wavefronts_t* const affine_wavefronts);
+
+affine_wavefront_t* affine_wavefronts_allocate_wavefront(affine_wavefronts_t* const affine_wavefronts,const int index_num);
 
 #endif
