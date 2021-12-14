@@ -29,6 +29,15 @@ Translate k and offset to coordinates h,i
 #define AFFINE_WAVEFRONT_OFFSET(h,i) (i)
 
 /*
+Add to index set
+*/
+#define ADD_INDEX(index_set, num, k, v, position) \
+  index_set[num].diagonal_index=k;\
+  index_set[num].segment_index=v;\
+  index_set[num].storage_position=position;\
+  num++;
+
+/*
 Offset size
 */
 //#define AFFINE_WAVEFRONT_W8
@@ -55,7 +64,6 @@ typedef struct{
     int diagonal_index;
     int segment_index;
     int storage_position;
-    int score_stamp;
 } affine_wavefront_index_t;
 
 typedef struct{
@@ -71,8 +79,10 @@ typedef struct{
     //Limits
     int max_penalty;        //MAX(mismatch_penalty, single_gap_penalty)
     affine_wavefront_index_t* index_set;            //index sets
+    affine_wavefront_index_t* index_set_null;
     int index_set_num;
-    affine_wavefront_t*** mwavefronts;           //M-wavefronts
+    int index_storage_num;
+    affine_wavefront_t** mwavefronts;           //M-wavefronts
     affine_wavefront_t** iwavefronts;           //I-wavefronts
     affine_wavefront_t** dwavefronts;          //D-wavefronts
     affine_wavefront_t wavefront_null;
@@ -113,5 +123,25 @@ void affine_wavefronts_clear(affine_wavefronts_t* const affine_wavefronts);
 void affine_wavefronts_delete(affine_wavefronts_t* const affine_wavefronts);
 
 affine_wavefront_t* affine_wavefronts_allocate_wavefront(affine_wavefronts_t* const affine_wavefronts,const int index_num);
+
+/*
+Sort index
+*/
+bool sort_index(affine_wavefront_index_t a, affine_wavefront_index_t b)
+{
+    if (a.segment_index<b.segment_index)
+      return true;
+    else if (a.segment_index==b.segment_index && a.diagonal_index<b.diagonal_index)
+      return true;
+    else if (a.segment_index==b.segment_index && a.diagonal_index==b.diagonal_index && a.storage_position<=b.storage_position)
+      return true;
+    else
+      return false;
+}
+
+bool unique_index(affine_wavefront_index_t a, affine_wavefront_index_t b)
+{
+  return(a.segment_index==b.segment_index && a.diagonal_index==b.diagonal_index);
+}
 
 #endif
