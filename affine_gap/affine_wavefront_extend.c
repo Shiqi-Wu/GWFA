@@ -3,10 +3,14 @@
 
 void affine_wavefronts_extend_mwavefront_compute_packed(
     affine_wavefronts_t* const affine_wavefronts,
-    const char* const text, const int score){
+    const char* const text, const int score, 
+    const int alignment_v, const int alignment_k){
         // Fetch m-wavefront
         affine_wavefront_t* const mwavefront = affine_wavefronts->mwavefronts[score];
         if (mwavefront==NULL) return;
+        // Fetch full index set
+        affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_index[score % affine_wavefronts->full_index_size];
+        int full_index_num = 0;
         // Extend diagonally each wavefront point
         awf_offset_t* const offsets = mwavefront->offsets;
         affine_wavefront_index_t* index_set = affine_wavefronts->index_set;
@@ -19,11 +23,16 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
             const int k = index.diagonal_index;
             const int v = index.segment_index;
             const int position = index.storage_position;
+            if (index.full) {
+                ADD_INDEX(index_set_null,nindex_num,k,v,position,true);
+                continue;}
             const awf_offset_t offset = offsets[position];
             if (offset < 0) continue;
             const uint32_t h = AFFINE_WAVEFRONT_H(k,offset);
             const int text_length = affine_wavefronts->text_length;
-            if (h >= text_length) continue;
+            if (h >= text_length) {
+                ADD_INDEX(index_set_null,nindex_num,k,v,position,true);
+                continue;}
             const char* segment = affine_wavefronts->graph->node[v].node_pattern;
             const uint32_t i = AFFINE_WAVEFRONT_I(k,offset);
             const int segment_length = affine_wavefronts->graph->node[v].node_pattern;
@@ -62,36 +71,43 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                         {
                             case 3:{
                                 index_set_null[nindex_num-1].storage_position = position;
-                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX);
+                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX,false);
                                 break;
                             }
                             case 2:{
-                                ADD_INDEX(index_set_null,nindex_num,k,v,position);
-                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX);
+                                ADD_INDEX(index_set_null,nindex_num,k,v,position,false);
+                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX,false);
                                 break;
                             }
                             case 1:{
                                 index_set_null[nindex_num-1].storage_position = position;
-                                ADD_INDEX(index_set_null,nindex_num,k-1,v,INT_MAX);
-                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX);
+                                ADD_INDEX(index_set_null,nindex_num,k-1,v,INT_MAX,false);
+                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX,false);
                                 break;
                             }
                             case 0:{
-                                ADD_INDEX(index_set_null,nindex_num,k-1,v,INT_MAX);
-                                ADD_INDEX(index_set_null,nindex_num,k,v,position);
-                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX);
+                                ADD_INDEX(index_set_null,nindex_num,k-1,v,INT_MAX,false);
+                                ADD_INDEX(index_set_null,nindex_num,k,v,position,false);
+                                ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX,false);
                             }
                         }
                     }
                     else
                     {
-                        ADD_INDEX(index_set_null,nindex_num,k-1,v,INT_MAX);
-                        ADD_INDEX(index_set_null,nindex_num,k,v,position);
-                        ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX);
+                        ADD_INDEX(index_set_null,nindex_num,k-1,v,INT_MAX,false);
+                        ADD_INDEX(index_set_null,nindex_num,k,v,position,false);
+                        ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX,false);
                     }
                 }
             }
             else{
+                if(alignment_v==v && alignment_k==k)
+                    {
+                        affine_wavefronts->final_status = true;
+                        return;
+                    }
+                ADD_INDEX(index_set_null,nindex_num,k,v,position,true);
+                ADD_INDEX(full_index_set,full_index_num,k,v,position,true);
                 int count = 0;
                 int next_num = affine_wavefronts->graph->node[v].next_num;
                 int* next_node = affine_wavefronts->graph->node[v].next;
@@ -100,17 +116,17 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                     int w = next_node[node_num];
                     if (text[i+1]==affine_wavefronts->graph->node[w].node_pattern[0])
                     {
-                        ADD_INDEX(index_set,index_num,i+1,w,INT_MAX);
+                        ADD_INDEX(index_set,index_num,i+1,w,INT_MAX,false);
                         ++count;
                     }
                     else{
-                        ADD_INDEX(index_set_null,nindex_num,i,w,INT_MAX);
-                        ADD_INDEX(index_set_null,nindex_num,i+1,w,INT_MAX);
+                        ADD_INDEX(index_set_null,nindex_num,i,w,INT_MAX,false);
+                        ADD_INDEX(index_set_null,nindex_num,i+1,w,INT_MAX,false);
                     }
                 }
                 if (next_num==0||count<next_num)
                 {
-                    ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX);
+                    ADD_INDEX(index_set_null,nindex_num,k+1,v,INT_MAX,false);
                 }
             }            
         }

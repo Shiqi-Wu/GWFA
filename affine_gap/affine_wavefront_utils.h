@@ -1,0 +1,12 @@
+//DESCRIPTION: 
+
+#include "affine_wavefront.h"
+
+affine_wavefront_t* affine_wavefronts_get_source_mwavefront(
+    affine_wavefronts_t* const affine_wavefronts, const int score);
+
+affine_wavefront_t* affine_wavefronts_get_source_iwavefront(
+    affine_wavefronts_t* const affine_wavefronts, const int score);
+
+affine_wavefront_t* affine_wavefronts_get_source_dwavefront(
+    affine_wavefronts_t* const affine_wavefronts, const int score);

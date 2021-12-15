@@ -31,10 +31,11 @@ Translate k and offset to coordinates h,i
 /*
 Add to index set
 */
-#define ADD_INDEX(index_set, num, k, v, position) \
+#define ADD_INDEX(index_set, num, k, v, position, full_status) \
   index_set[num].diagonal_index=k;\
   index_set[num].segment_index=v;\
   index_set[num].storage_position=position;\
+  index_set[num].full=full_status;\
   num++;
 
 /*
@@ -64,6 +65,7 @@ typedef struct{
     int diagonal_index;
     int segment_index;
     int storage_position;
+    bool full;
 } affine_wavefront_index_t;
 
 typedef struct{
@@ -91,6 +93,12 @@ typedef struct{
     affine_wavefront_penalties_t penalties;      //Penalties parameters
     mm_allocator_t* mm_allocator;
     int num_wavefronts;
+    // finalization
+    bool final_status;
+    // Hash_table
+    int full_index_size;
+    affine_wavefront_index_t** full_index;
+    int* full_index_num;
 } affine_wavefronts_t;
 
 /*
@@ -107,6 +115,19 @@ typedef struct{
     affine_wavefront_t* out_iwavefront;
     affine_wavefront_t* out_dwavefront;
 } affine_wavefront_set;
+
+/*
+Full index set
+*/
+typedef struct{
+  affine_wavefront_index_t* in_index_gap;
+  int in_index_gap_num;
+  affine_wavefront_index_t* in_index_ext;
+  int in_index_ext_num;
+  affine_wavefront_index_t* in_index_sub;
+  int in_index_sub_num;
+}affine_wavefront_index_set;
+
 
 void affine_wavefronts_allocate_wavefront_null(affine_wavefronts_t* const affine_wavefronts);
 
