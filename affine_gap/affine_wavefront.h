@@ -97,8 +97,12 @@ typedef struct{
     bool final_status;
     // Hash_table
     int full_index_size;
-    affine_wavefront_index_t** full_index;
-    int* full_index_num;
+    affine_wavefront_index_t** full_mindex;
+    int* full_mindex_num;
+    affine_wavefront_index_t** full_iindex;
+    int* full_iindex_num;
+    affine_wavefront_index_t** full_dindex;
+    int* full_dindex_num;
 } affine_wavefronts_t;
 
 /*
@@ -120,12 +124,18 @@ typedef struct{
 Full index set
 */
 typedef struct{
-  affine_wavefront_index_t* in_index_gap;
-  int in_index_gap_num;
-  affine_wavefront_index_t* in_index_ext;
-  int in_index_ext_num;
-  affine_wavefront_index_t* in_index_sub;
-  int in_index_sub_num;
+  //In-sets
+  affine_wavefront_index_t* in_mindex_sub;
+  int in_mindex_sub_num;
+  affine_wavefront_index_t* in_mindex_gap;
+  int in_mindex_gap_num;
+  affine_wavefront_index_t* in_dindex_ext;
+  int in_dindex_ext_num;
+  //Out-sets
+  affine_wavefront_index_t* out_mindex;
+  int* out_mindex_num;
+  affine_wavefront_index_t* out_dindex;
+  int* out_dindex_num;
 }affine_wavefront_index_set;
 
 
