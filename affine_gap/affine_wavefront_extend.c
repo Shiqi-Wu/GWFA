@@ -9,7 +9,7 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
         affine_wavefront_t* const mwavefront = affine_wavefronts->mwavefronts[score];
         if (mwavefront==NULL) return;
         // Fetch full index set
-        affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_index[score % affine_wavefronts->full_index_size];
+        affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_mindex[score % affine_wavefronts->full_index_size];
         int full_index_num = 0;
         // Extend diagonally each wavefront point
         awf_offset_t* const offsets = mwavefront->offsets;

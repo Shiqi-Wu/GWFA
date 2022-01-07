@@ -120,3 +120,4 @@ affine_wavefront_t* affine_wavefronts_allocate_wavefront(affine_wavefronts_t* co
     // Return
     return wavefront;
 }
+

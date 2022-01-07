@@ -95,7 +95,7 @@ typedef struct{
     int num_wavefronts;
     // finalization
     bool final_status;
-    // Hash_table
+    // full_index
     int full_index_size;
     affine_wavefront_index_t** full_mindex;
     int* full_mindex_num;
@@ -103,6 +103,8 @@ typedef struct{
     int* full_iindex_num;
     affine_wavefront_index_t** full_dindex;
     int* full_dindex_num;
+    // position table
+    int** position_table;
 } affine_wavefronts_t;
 
 /*
