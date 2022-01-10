@@ -54,7 +54,8 @@ affine_wavefronts_t* affine_wavefronts_new(
     const int pattern_length,
     const int text_length,
     affine_wavefront_penalties_t* const penalties,
-    mm_allocator_t* const mm_allocator){
+    mm_allocator_t* const mm_allocator,
+    graph_t* graph){
         // Allocate
         affine_wavefronts_t* const affine_wavefronts = mm_allocator_alloc(mm_allocator,affine_wavefronts_t);
         // Dimensions
@@ -64,6 +65,8 @@ affine_wavefronts_t* affine_wavefronts_new(
         affine_wavefronts->num_wavefronts = num_wavefronts;
         // MM
         affine_wavefronts->mm_allocator = mm_allocator;
+        // Graph
+        affine_wavefronts->graph = graph;
         // Limits
         const int single_gap_penalty = penalties->gap_opening + penalties->gap_extension;
         const int max_penalty = MAX(penalties->mismatch,single_gap_penalty);

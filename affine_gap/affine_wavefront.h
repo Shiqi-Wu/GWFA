@@ -80,6 +80,7 @@ typedef struct{
     int text_length;        //Text length
     //Limits
     int max_penalty;        //MAX(mismatch_penalty, single_gap_penalty)
+    //Index set
     affine_wavefront_index_t* index_set;            //index sets
     affine_wavefront_index_t* index_set_null;
     int index_set_num;
@@ -149,7 +150,8 @@ affine_wavefronts_t* affine_wavefronts_new(
     const int pattern_length,
     const int text_length,
     affine_wavefront_penalties_t* const penalties,
-    mm_allocator_t* const mm_allocator);
+    mm_allocator_t* const mm_allocator,
+    graph_t* graph);
 
 void affine_wavefronts_clear(affine_wavefronts_t* const affine_wavefronts);
 

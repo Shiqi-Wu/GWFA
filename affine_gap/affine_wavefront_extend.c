@@ -8,7 +8,7 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
         // Fetch m-wavefront
         affine_wavefront_t* const mwavefront = affine_wavefronts->mwavefronts[score];
         if (mwavefront==NULL) return;
-        // Fetch full index set
+        // Fetch full index set(这里要修改！)
         affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_mindex[score % affine_wavefronts->full_index_size];
         int full_index_num = 0;
         // Extend diagonally each wavefront point
@@ -65,9 +65,9 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                     index_set[--n]=index;
                 }
                 else{
-                    if(nindex_num > 0)
+                    if(nindex_num > 1)
                     {
-                        switch(((index_set_null[nindex_num-2].diagonal_index == k-1)&& index_set_null[nindex_num-2].segment_index == v)<<1+ ((index_set_null[nindex_num-1].diagonal_index == k)&& index_set_null[nindex_num-1].segment_index == v))
+                        switch(((index_set_null[nindex_num-2].diagonal_index == k-1)&& index_set_null[nindex_num-2].segment_index == v)<<1 | ((index_set_null[nindex_num-1].diagonal_index == k)&& index_set_null[nindex_num-1].segment_index == v))
                         {
                             case 3:{
                                 index_set_null[nindex_num-1].storage_position = position;
