@@ -99,8 +99,8 @@ typedef struct{
     int full_index_size;
     affine_wavefront_index_t** full_mindex;
     int* full_mindex_num;
-    affine_wavefront_index_t** full_iindex;
-    int* full_iindex_num;
+    //affine_wavefront_index_t** full_iindex;
+    //int* full_iindex_num;
     affine_wavefront_index_t** full_dindex;
     int* full_dindex_num;
     // position table

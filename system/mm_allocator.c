@@ -1,32 +1,4 @@
 /*
- *                             The MIT License
- *
- * Wavefront Alignments Algorithms
- * Copyright (c) 2017 by Santiago Marco-Sola  <santiagomsola@gmail.com>
- *
- * This file is part of Wavefront Alignments Algorithms.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * PROJECT: Wavefront Alignments Algorithms
- * AUTHOR(S): Santiago Marco-Sola <santiagomsola@gmail.com>
- * VERSION: v21.02.15
  * DESCRIPTION: Simple managed-memory allocator that reduces the overhead
  *   of using malloc/calloc/free functions by allocating slabs of memory
  *   and dispatching memory segments in order.
@@ -135,16 +107,16 @@ void mm_allocator_segment_delete(
   vector_delete(segment->requests);
   free(segment->memory);
   free(segment);
-}//删掉request
+}
 mm_allocator_request_t* mm_allocator_segment_get_request(
     mm_allocator_segment_t* const segment,
     const uint64_t request_idx) {
   return vector_get_elm(segment->requests,request_idx,mm_allocator_request_t);
-}//取位置
+}
 uint64_t mm_allocator_segment_get_num_requests(
     mm_allocator_segment_t* const segment) {
   return vector_get_used(segment->requests);
-}//输出用过的大小
+}
 /*
  * Setup
  */
@@ -169,7 +141,7 @@ mm_allocator_t* mm_allocator_new(
   mm_allocator->malloc_requests_freed = 0;
   // Return
   return mm_allocator;
-}//加一个新的
+}
 void mm_allocator_clear(
     mm_allocator_t* const mm_allocator) {
   // Clear segments
@@ -185,7 +157,7 @@ void mm_allocator_clear(
   }
   vector_clear(mm_allocator->malloc_requests);
   mm_allocator->malloc_requests_freed = 0;
-}//清除
+}
 void mm_allocator_delete(
     mm_allocator_t* const mm_allocator) {
   // Free segments

@@ -1,4 +1,4 @@
-//DESCRIPTION: 
+//DESCRIPTION: Graph Wavefront alignment algorithm for pairwise gap-affine alignment
 #include "affine_gap/affine_wavefront.h"
 
 void affine_wavefronts_allocate_wavefront_null(affine_wavefronts_t* const affine_wavefronts) {
@@ -6,7 +6,7 @@ void affine_wavefronts_allocate_wavefront_null(affine_wavefronts_t* const affine
     const int wavefront_length = affine_wavefronts->graph->pattern_length + affine_wavefronts->graph->node_num * (affine_wavefronts->text_length - 1);
     awf_offset_t* const offsets_null = mm_allocator_calloc(affine_wavefronts->mm_allocator,wavefront_length,awf_offset_t,false);
     // Initialize
-   affine_wavefronts->wavefront_null.null = true;
+    affine_wavefronts->wavefront_null.null = true;
     affine_wavefronts->wavefront_null.offsets = offsets_null;
     int i;
     for (i=0;i<wavefront_length;++i){
@@ -29,6 +29,25 @@ void affine_wavefront_allocate_wavefront_components(affine_wavefronts_t* const a
     affine_wavefront_t* const wavefronts_mem = mm_allocator_calloc(mm_allocator, 3*num_wavefronts,affine_wavefront_t,false);
     affine_wavefronts->wavefronts_mem = wavefronts_mem;
     affine_wavefronts->wavefronts_current = wavefronts_mem;
+    // Initialize full index sets
+    affine_wavefronts->full_dindex = mm_allocator_calloc(mm_allocator, affine_wavefronts->num_wavefronts, affine_wavefront_index_t*, true);
+    affine_wavefronts->full_mindex = mm_allocator_calloc(mm_allocator, affine_wavefronts->num_wavefronts, affine_wavefront_index_t*, true);
+    // Initialize position matrix
+    affine_wavefronts->position_table = mm_allocator_calloc(mm_allocator, affine_wavefronts->graph->node_num, int*, true);
+    int i;
+    for (i=1; i<affine_wavefronts->graph->node_num; i++)
+    {
+        affine_wavefronts->position_table[i] = NULL;
+    }
+}
+
+void affine_wavefront_allocate_columns(affine_wavefronts_t* const affine_wavefronts, int node_idx){
+    affine_wavefronts->position_table[node_idx] = mm_allocator_calloc(affine_wavefronts->mm_allocator, affine_wavefronts->graph->node[node_idx].pattern_length + affine_wavefronts->text_length + 1, int, true);
+    int i;
+    for (i=0; i < affine_wavefronts->graph->node[node_idx].pattern_length + affine_wavefronts->text_length + 1; i++)
+    {
+        affine_wavefronts->position_table[node_idx][i] = -1;
+    }
 }
 
 affine_wavefronts_t* affine_wavefronts_new(
@@ -50,6 +69,7 @@ affine_wavefronts_t* affine_wavefronts_new(
         const int max_penalty = MAX(penalties->mismatch,single_gap_penalty);
         affine_wavefronts_allocate_wavefront_componets(affine_wavefronts);
         affine_wavefronts_allocate_wavefront_null(affine_wavefronts);
+        affine_wavefront_allocate_columns(affine_wavefronts,0);
         #ifdef AFFINE_WAVEFRONT_DEBUG
         affine_table_allocate(&affine_wavefronts->gap_affine_table,pattern_length,text_length,mm_allocator);
         int h, v;
