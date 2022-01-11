@@ -5,6 +5,7 @@
 void edit_wavefront_extend(
     edit_wavefronts_t* const edit_wavefronts,
     const char* const text,
+    const graph_padded_t* const graph,
     const int alignment_v, 
     const int alignment_k){
         edit_wavefront_index_t* pre_idx = edit_wavefronts->index_set;
@@ -29,7 +30,7 @@ void edit_wavefront_extend(
                 aft_idx[aft_num++] = index;
                 continue;
             }
-            const char* segment = edit_wavefronts->graph->node[v].node_pattern;
+            const char* segment = graph->node[v].pattern_padded_buffer;
             if (i < edit_wavefronts->graph->node[v].pattern_length)
             {
                 // Fetch pattern/text blocks
@@ -103,6 +104,11 @@ void edit_wavefront_extend(
             }
             else
             {
+                if (v == alignment_v && k == alignment_k)
+                {
+                    edit_wavefronts->final_status = true;
+                    return;
+                }
                 for (int j = 0; j < edit_wavefronts->graph->node[v].next_num; j++)
                 {
                     int w = edit_wavefronts->graph->node[v].next[j];

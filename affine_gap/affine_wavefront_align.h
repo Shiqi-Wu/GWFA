@@ -5,5 +5,6 @@
 #include "../utils/commons.h"
 #include "affine_wavefront_utils.h"
 #include "affine_wavefront_extend.h"
+#include "utils/string_padded.h"
 
 #endif /* AFFINE_WAVEFRONT_ALIGN_H_ */

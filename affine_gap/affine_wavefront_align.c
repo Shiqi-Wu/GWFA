@@ -71,7 +71,7 @@ void affine_wavefront_fetch_index(affine_wavefronts_t* affine_wavefronts, int sc
     if (score >= affine_wavefronts->penalties.gap_extension)
     {
         int ext_position = (score - affine_wavefronts->penalties.gap_extension) % affine_wavefronts->full_index_size;
-        index_set->in_dindex_ext = affine_wavefronts->full_iindex[ext_position];
+        index_set->in_dindex_ext = affine_wavefronts->full_dindex[ext_position];
     }
     else
     {
@@ -484,7 +484,7 @@ void affine_wavefronts_align(
     const int text_length, 
     int alignment_v){
     // Init padded strings
-    //string_padded_t* const strings_padded = strings_padded_new_rhomb(graph,text,text_length,AFFINE_WAVEFRONT_PADDING,affine_wavefronts->mm_allocator);
+    // string_padded_t* const strings_padded = strings_padded_new_rhomb(graph,text,text_length,AFFINE_WAVEFRONT_PADDING,affine_wavefronts->mm_allocator);
     // Initialize wavefront
     affine_wavefront_initialize(affine_wavefronts);
     affine_wavefront_set* wavefront_set;
@@ -492,7 +492,7 @@ void affine_wavefronts_align(
     affine_wavefront_index_set* index_set;
     // Compute wavefronts for increasing score
     int score = 0;
-    int alignment_k = AFFINE_WAVEFRONT_DIAGONAL(text_length,alignment_k);
+    int alignment_k = AFFINE_WAVEFRONT_DIAGONAL(text_length, affine_wavefronts->graph[alignment_k].pattern_length);
    
     while (true) {
         // Exact extend s-wavefront
