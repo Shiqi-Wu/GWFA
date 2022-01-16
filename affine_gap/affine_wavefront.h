@@ -69,6 +69,11 @@ typedef struct{
 } affine_wavefront_index_t;
 
 typedef struct{
+    int idx_num;
+    affine_wavefront_index_t* idx;
+} affine_wavefront_indexs_t;
+
+typedef struct{
     bool null;
     int offset_num;
     awf_offset_t* offsets;
@@ -81,9 +86,12 @@ typedef struct{
     //Limits
     int max_penalty;        //MAX(mismatch_penalty, single_gap_penalty)
     //Index set
-    affine_wavefront_index_t* index_set;            //index sets
-    affine_wavefront_index_t* index_set_null;
-    int index_set_num;
+    affine_wavefront_indexs_t** mindex_set;            //M-index sets
+    affine_wavefront_indexs_t** iindex_set;            //I-index sets for gap extention
+    affine_wavefront_indexs_t** dindex_set;            //D-index sets for gap extention
+    affine_wavefront_indexs_t** iindex_set_gap;         //I-index sets for gap open
+    affine_wavefront_indexs_t** dindex_set_gap;         //D-index sets for gap open
+    affine_wavefront_indexs_t* index_set_null;
     int index_storage_num;
     affine_wavefront_t** mwavefronts;           //M-wavefronts
     affine_wavefront_t** iwavefronts;           //I-wavefronts
@@ -97,15 +105,10 @@ typedef struct{
     // finalization
     bool final_status;
     // full_index
-    int full_index_size;
-    affine_wavefront_index_t** full_mindex;
-    int* full_mindex_num;
-    //affine_wavefront_index_t** full_iindex;
-    //int* full_iindex_num;
-    affine_wavefront_index_t** full_dindex;
-    int* full_dindex_num;
+    // affine_wavefront_indexs_t* full_mindex;
+    // affine_wavefront_indexs_t* full_dindex;
     // position table
-    int** position_table;
+    int** visit;
 } affine_wavefronts_t;
 
 /*
@@ -124,21 +127,21 @@ typedef struct{
 } affine_wavefront_set;
 
 /*
-Full index set
+index set
 */
 typedef struct{
   //In-sets
-  affine_wavefront_index_t* in_mindex_sub;
-  int in_mindex_sub_num;
-  affine_wavefront_index_t* in_mindex_gap;
-  int in_mindex_gap_num;
-  affine_wavefront_index_t* in_dindex_ext;
-  int in_dindex_ext_num;
+  affine_wavefront_indexs_t* in_mindex_sub;
+  affine_wavefront_indexs_t* in_dindex_gap;
+  affine_wavefront_indexs_t* in_iindex_gap;
+  affine_wavefront_indexs_t* in_dindex_ext;
+  affine_wavefront_indexs_t* in_iindex_ext;
   //Out-sets
-  affine_wavefront_index_t* out_mindex;
-  int* out_mindex_num;
-  affine_wavefront_index_t* out_dindex;
-  int* out_dindex_num;
+  affine_wavefront_indexs_t* out_mindex;
+  affine_wavefront_indexs_t* out_dindex;
+  affine_wavefront_indexs_t* out_iindex;
+  // NULL
+  affine_wavefront_index_t* index_null
 }affine_wavefront_index_set;
 
 

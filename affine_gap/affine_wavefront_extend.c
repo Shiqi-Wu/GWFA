@@ -8,15 +8,15 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
         // Fetch m-wavefront
         affine_wavefront_t* const mwavefront = affine_wavefronts->mwavefronts[score];
         if (mwavefront==NULL) return;
-        // Fetch full index set(这里要修改！)
-        affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_mindex[score % affine_wavefronts->full_index_size];
+        // Fetch full index set
+        // affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_mindex[score].idx;
         int full_index_num = 0;
         // Extend diagonally each wavefront point
         awf_offset_t* const offsets = mwavefront->offsets;
-        affine_wavefront_index_t* index_set = affine_wavefronts->index_set;
-        affine_wavefront_index_t* index_set_null = affine_wavefronts->index_set_null;
+        affine_wavefront_index_t* index_set = affine_wavefronts->mindex_set[score]->idx;
+        affine_wavefront_index_t* index_set_null = affine_wavefronts->index_set_null.idx;
         int n = 0; int nindex_num = 0;
-        int index_num = affine_wavefronts->index_set_num;
+        int index_num = affine_wavefronts->mindex_set[score]->idx_num;
         while (n < index_num){
             // Fetch offset & positions
             const affine_wavefront_index_t index = index_set[n++];
@@ -107,16 +107,16 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                         return;
                     }
                 ADD_INDEX(index_set_null,nindex_num,k,v,position,true);
-                ADD_INDEX(full_index_set,full_index_num,k,v,position,true);
+                // ADD_INDEX(full_index_set,full_index_num,k,v,position,true);
                 int count = 0;
                 int next_num = affine_wavefronts->graph->node[v].next_num;
                 int* next_node = affine_wavefronts->graph->node[v].next;
                 for (int node_num = 0; node_num < next_num; node_num++)
                 {
                     int w = next_node[node_num];
-                    if (text[i+1]==affine_wavefronts->graph->node[w].node_pattern[0])
+                    if (text[i+1]==affine_wavefronts->graph->node[w].node_pattern[0] && !affine_wavefronts->visit[w][i+1])
                     {
-                        ADD_INDEX(index_set,index_num,i+1,w,INT_MAX,false);
+                        ADD_INDEX(index_set,index_num,i+1,w,affine_wavefronts->index_storage_num++,false);
                         ++count;
                     }
                     else{
@@ -140,7 +140,6 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                 affine_wavefronts->index_storage_num++;
             }
         }
-        affine_wavefronts->index_set_num = nindex_num;
-        affine_wavefronts->index_set = index_set_null;
-        affine_wavefronts->index_set_null = index_set;
+        affine_wavefronts->mindex_set[score]->idx_num = nindex_num;
+        affine_wavefronts->mindex_set[score]->idx = index_set_null;
     }

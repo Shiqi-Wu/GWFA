@@ -1,6 +1,4 @@
 //DESCRIPTION: Graph struct in GWFA Algorithm
-#include "utils/commons.h"
-#include "utils/vector.h"
 
 typedef struct{
     int node_idx;
@@ -8,8 +6,6 @@ typedef struct{
     char* node_pattern;
     int next_num;
     int* next;
-    int pre_num;
-    int* pre;
 }node_t;
 
 typedef struct{

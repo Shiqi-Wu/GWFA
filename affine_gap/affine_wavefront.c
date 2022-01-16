@@ -33,20 +33,20 @@ void affine_wavefront_allocate_wavefront_components(affine_wavefronts_t* const a
     affine_wavefronts->full_dindex = mm_allocator_calloc(mm_allocator, affine_wavefronts->num_wavefronts, affine_wavefront_index_t*, true);
     affine_wavefronts->full_mindex = mm_allocator_calloc(mm_allocator, affine_wavefronts->num_wavefronts, affine_wavefront_index_t*, true);
     // Initialize position matrix
-    affine_wavefronts->position_table = mm_allocator_calloc(mm_allocator, affine_wavefronts->graph->node_num, int*, true);
+    affine_wavefronts->visit = mm_allocator_calloc(mm_allocator, affine_wavefronts->graph->node_num, int*, true);
     int i;
     for (i=1; i<affine_wavefronts->graph->node_num; i++)
     {
-        affine_wavefronts->position_table[i] = NULL;
+        affine_wavefronts->visit[i] = NULL;
     }
 }
 
 void affine_wavefront_allocate_columns(affine_wavefronts_t* const affine_wavefronts, int node_idx){
-    affine_wavefronts->position_table[node_idx] = mm_allocator_calloc(affine_wavefronts->mm_allocator, affine_wavefronts->graph->node[node_idx].pattern_length + affine_wavefronts->text_length + 1, int, true);
+    affine_wavefronts->visit[node_idx] = mm_allocator_calloc(affine_wavefronts->mm_allocator, affine_wavefronts->graph->node[node_idx].pattern_length + affine_wavefronts->text_length + 1, int, true);
     int i;
     for (i=0; i < affine_wavefronts->graph->node[node_idx].pattern_length + affine_wavefronts->text_length + 1; i++)
     {
-        affine_wavefronts->position_table[node_idx][i] = -1;
+        affine_wavefronts->visit[node_idx][i] = -1;
     }
 }
 
