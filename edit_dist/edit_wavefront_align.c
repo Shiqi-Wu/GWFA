@@ -21,7 +21,7 @@ void edit_wavefronts_align(
 
         while (true){
             // Extend wavefront
-            edit_wavefront_extend(edit_wavefronts, strings_padded->text_padded_buffer, strings_padded->graph_padded, alignment_v, alignment_k);
+            edit_wavefront_extend(edit_wavefronts, strings_padded->text_padded, strings_padded->graph_padded, alignment_v, alignment_k);
             // Finalize
             if (edit_wavefronts->final_status) break;
             // Increase score

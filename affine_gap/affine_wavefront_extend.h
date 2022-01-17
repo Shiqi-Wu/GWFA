@@ -4,6 +4,7 @@
 #define AFFINE_WAVEFRONT_EXTEND_H_
 
 #include "affine_wavefront.h"
+#include "utils/string_padded.h"
 
 /*
  * Constants
@@ -16,7 +17,9 @@
 
 void affine_wavefronts_extend_mwavefront_compute_packed(
     affine_wavefronts_t* const affine_wavefronts,
-    const char* const text, const int score, 
+    const char* const text,
+    graph_padded_t* const graph,
+    const int score, 
     const int alignment_v, const int alignment_k);
 
 #endif /* AFFINE_WAVEFRONT_EXTEND_H_ */

@@ -1,20 +1,20 @@
+// DESCRIPTION: WFA extend exact-matches component
 
 #include"affine_wavefront_extend.h"
 
 void affine_wavefronts_extend_mwavefront_compute_packed(
     affine_wavefronts_t* const affine_wavefronts,
-    const char* const text, const int score, 
+    const char* const text,
+    graph_padded_t* const graph,
+    const int score, 
     const int alignment_v, const int alignment_k){
         // Fetch m-wavefront
         affine_wavefront_t* const mwavefront = affine_wavefronts->mwavefronts[score];
         if (mwavefront==NULL) return;
-        // Fetch full index set
-        // affine_wavefront_index_t* const full_index_set = affine_wavefronts->full_mindex[score].idx;
-        int full_index_num = 0;
         // Extend diagonally each wavefront point
         awf_offset_t* const offsets = mwavefront->offsets;
         affine_wavefront_index_t* index_set = affine_wavefronts->mindex_set[score]->idx;
-        affine_wavefront_index_t* index_set_null = affine_wavefronts->index_set_null.idx;
+        affine_wavefront_index_t* index_set_null = affine_wavefronts->index_set_null->idx;
         int n = 0; int nindex_num = 0;
         int index_num = affine_wavefronts->mindex_set[score]->idx_num;
         while (n < index_num){
@@ -33,7 +33,7 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
             if (h >= text_length) {
                 ADD_INDEX(index_set_null,nindex_num,k,v,position,true);
                 continue;}
-            const char* segment = affine_wavefronts->graph->node[v].node_pattern;
+            const char* segment = graph->node[v].pattern_padded_buffer;
             const uint32_t i = AFFINE_WAVEFRONT_I(k,offset);
             const int segment_length = affine_wavefronts->graph->node[v].node_pattern;
             if (i < segment_length){
@@ -67,7 +67,7 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                 else{
                     if(nindex_num > 1)
                     {
-                        switch(((index_set_null[nindex_num-2].diagonal_index == k-1)&& index_set_null[nindex_num-2].segment_index == v)<<1 | ((index_set_null[nindex_num-1].diagonal_index == k)&& index_set_null[nindex_num-1].segment_index == v))
+                        switch(((index_set_null[nindex_num-2].diagonal_index == k - 1)&& index_set_null[nindex_num-2].segment_index == v)<<1 | ((index_set_null[nindex_num-1].diagonal_index == k)&& index_set_null[nindex_num-1].segment_index == v))
                         {
                             case 3:{
                                 index_set_null[nindex_num-1].storage_position = position;
@@ -107,14 +107,15 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
                         return;
                     }
                 ADD_INDEX(index_set_null,nindex_num,k,v,position,true);
-                // ADD_INDEX(full_index_set,full_index_num,k,v,position,true);
                 int count = 0;
                 int next_num = affine_wavefronts->graph->node[v].next_num;
                 int* next_node = affine_wavefronts->graph->node[v].next;
                 for (int node_num = 0; node_num < next_num; node_num++)
                 {
                     int w = next_node[node_num];
-                    if (text[i+1]==affine_wavefronts->graph->node[w].node_pattern[0] && !affine_wavefronts->visit[w][i+1])
+                    if (affine_wavefronts->visit[w][i+1] >= 0)
+                        continue;
+                    if (text[i+1]==affine_wavefronts->graph->node[w].node_pattern[0])
                     {
                         ADD_INDEX(index_set,index_num,i+1,w,affine_wavefronts->index_storage_num++,false);
                         ++count;
@@ -132,12 +133,24 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
         }
         sort(index_set_null,index_set_null+nindex_num,sort_index);
         nindex_num = unique(index_set_null,index_set_null+nindex_num,unique_index)-(int)index_set_null;
-        for(n=0;n<nindex_num;n++)
+        for (n = 0;n < nindex_num;n++)
         {
             if (index_set_null[n].storage_position >= affine_wavefronts->index_storage_num)
             {
                 index_set_null[n].storage_position = affine_wavefronts->index_storage_num;
                 affine_wavefronts->index_storage_num++;
+            }
+        }
+        int didx_num = 0; int iidx_num = 0;
+        for (n = 1; n < nindex_num; n++)
+        {
+            if (index_set_null[n - 1].diagonal_index == index_set_null[n].diagonal_index - 1 && index_set_null[n - 1].segment_index == index_set_null[n].segment_index)
+            {
+                affine_wavefronts->dindex_set_gap[score]->idx[didx_num++] = index_set_null[n - 1];
+                if (offsets[index_set_null[n].storage_position]>=0)
+                {
+                    affine_wavefronts->dindex_set_gap[score]->idx[iidx_num++] = index_set_null[n];
+                }
             }
         }
         affine_wavefronts->mindex_set[score]->idx_num = nindex_num;

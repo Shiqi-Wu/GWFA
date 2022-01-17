@@ -12,9 +12,6 @@ void affine_wavefronts_allocate_wavefront_null(affine_wavefronts_t* const affine
     for (i=0;i<wavefront_length;++i){
         offsets_null[i] = AFFINE_WAVEFRONT_OFFSET_NULL;
     }
-    // Allocate index set
-    affine_wavefronts->index_set_num = 0;
-    affine_wavefronts->index_set = mm_allocator_calloc(affine_wavefronts->mm_allocator,affine_wavefronts->num_wavefronts,affine_wavefront_index_t,false);
 }
 
 void affine_wavefront_allocate_wavefront_components(affine_wavefronts_t* const affine_wavefronts){
@@ -29,9 +26,6 @@ void affine_wavefront_allocate_wavefront_components(affine_wavefronts_t* const a
     affine_wavefront_t* const wavefronts_mem = mm_allocator_calloc(mm_allocator, 3*num_wavefronts,affine_wavefront_t,false);
     affine_wavefronts->wavefronts_mem = wavefronts_mem;
     affine_wavefronts->wavefronts_current = wavefronts_mem;
-    // Initialize full index sets
-    affine_wavefronts->full_dindex = mm_allocator_calloc(mm_allocator, affine_wavefronts->num_wavefronts, affine_wavefront_index_t*, true);
-    affine_wavefronts->full_mindex = mm_allocator_calloc(mm_allocator, affine_wavefronts->num_wavefronts, affine_wavefront_index_t*, true);
     // Initialize position matrix
     affine_wavefronts->visit = mm_allocator_calloc(mm_allocator, affine_wavefronts->graph->node_num, int*, true);
     int i;
@@ -121,7 +115,11 @@ void affine_wavefronts_delete(affine_wavefronts_t* const affine_wavefronts){
     mm_allocator_free(mm_allocator,affine_wavefronts->iwavefronts);
     mm_allocator_free(mm_allocator,affine_wavefronts->dwavefronts);
     mm_allocator_free(mm_allocator,affine_wavefronts->wavefront_null.offsets );
-    mm_allocator_free(mm_allocator,affine_wavefronts->index_set);
+    mm_allocator_free(mm_allocator,affine_wavefronts->mindex_set);
+    mm_allocator_free(mm_allocator,affine_wavefronts->dindex_set);
+    mm_allocator_free(mm_allocator,affine_wavefronts->dindex_set_gap);
+    mm_allocator_free(mm_allocator,affine_wavefronts->iindex_set);
+    mm_allocator_free(mm_allocator,affine_wavefronts->iindex_set_gap);
     // Free bulk memory
     mm_allocator_free(mm_allocator,affine_wavefronts->wavefronts_mem);
     // DEBUG

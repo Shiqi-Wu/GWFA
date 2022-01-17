@@ -8,6 +8,7 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "affine_wavefront.h": "c",
-        "commons.h": "c"
+        "commons.h": "c",
+        "string_padded.h": "c"
     }
 }

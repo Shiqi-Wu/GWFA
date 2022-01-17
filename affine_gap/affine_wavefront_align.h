@@ -1,3 +1,5 @@
+// DESCRIPTION: Graph Wavefront alignment algorithm for pairwise gap-affine alignment
+
 #ifndef AFFINE_WAVEFRONT_ALIGN_H_
 #define AFFINE_WAVEFRONT_ALIGN_H_
 

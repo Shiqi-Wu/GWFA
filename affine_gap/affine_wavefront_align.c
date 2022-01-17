@@ -1,3 +1,5 @@
+// DESCRIPTION: Graph Wavefront alignment algorithm for pairwise gap-affine alignment
+
 #include "affine_wavefront_align.h"
 
 /*
@@ -686,7 +688,7 @@ void affine_wavefronts_align(
     const int text_length, 
     int alignment_v){
     // Init padded strings
-    // string_padded_t* const strings_padded = strings_padded_new_rhomb(graph,text,text_length,AFFINE_WAVEFRONT_PADDING,affine_wavefronts->mm_allocator);
+    strings_padded_t* const strings_padded = strings_padded_new_rhomb(graph,text,text_length,AFFINE_WAVEFRONT_PADDING,affine_wavefronts->mm_allocator);
     // Initialize wavefront
     affine_wavefront_initialize(affine_wavefronts);
     affine_wavefront_set* wavefront_set;
@@ -699,7 +701,7 @@ void affine_wavefronts_align(
    
     while (true) {
         // Exact extend s-wavefront
-        affine_wavefronts_extend_mwavefront_compute_packed(affine_wavefronts,text,score, alignment_v, alignment_k);
+        affine_wavefronts_extend_mwavefront_compute_packed(affine_wavefronts,strings_padded->text_padded, strings_padded->graph_padded, score, alignment_v, alignment_k);
         if (affine_wavefronts->final_status) break;
         // Update all wavefronts
         ++score; // Increase score

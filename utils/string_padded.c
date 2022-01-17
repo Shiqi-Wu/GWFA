@@ -1,3 +1,5 @@
+// DESCRIPTION: Padded string module to avoid handling corner conditions
+
 #include "../utils/string_padded.h"
 #include "../system/mm_allocator.h"
 
