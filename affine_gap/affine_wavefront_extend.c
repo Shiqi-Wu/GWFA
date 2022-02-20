@@ -7,7 +7,8 @@ void affine_wavefronts_extend_mwavefront_compute_packed(
     const char* const text,
     graph_padded_t* const graph,
     const int score, 
-    const int alignment_v, const int alignment_k){
+    const int alignment_v, 
+    const int alignment_k){
         // Fetch m-wavefront
         affine_wavefront_t* const mwavefront = affine_wavefronts->mwavefronts[score];
         if (mwavefront==NULL) return;

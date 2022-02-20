@@ -1,5 +1,8 @@
 //DESCRIPTION: Graph struct in GWFA Algorithm
 
+#ifndef GRAPH_STRUCT_H
+#define GRAPH_STRUCT_H
+
 typedef struct{
     int node_idx;
     int pattern_length;
@@ -13,3 +16,5 @@ typedef struct{
     int node_num;
     node_t* node;
 }graph_t;
+
+#endif

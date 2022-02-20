@@ -1,8 +1,11 @@
 // DESCRIPTION: Graph Wavefront alignment algorithm for unit cost
 
-#include "utils/commons.h"
-#include "utils/graph_struct.h"
-#include "system/mm_allocator.h"
+#include "../utils/commons.h"
+#include "../utils/graph_struct.h"
+#include "../system/mm_allocator.h"
+
+#ifndef EDIT_WAVEFRONT_
+#define EDIT_WAVEFRONT_
 
 // Translate k and offset to coordinates h,i
 #define EDIT_WAVEFRONT_I(k,offset) (offset)
@@ -62,26 +65,15 @@ void edit_wavefronts_clear(edit_wavefronts_t* const edit_wavefronts);
 
 void edit_wavefronts_delete(edit_wavefronts_t* const edit_wavefronts);
 
-/*
-Sort index
-*/
-bool sort_index(edit_wavefront_index_t a, edit_wavefront_index_t b)
-{
-    if (a.segment_index<b.segment_index)
-      return true;
-    else if (a.segment_index==b.segment_index && a.diagonal_index<b.diagonal_index)
-      return true;
-    else if (a.segment_index==b.segment_index && a.diagonal_index==b.diagonal_index && a.offset>b.offset)
-      return true;
-    else
-      return false;
-}
+bool edit_sort_index(edit_wavefront_index_t a, edit_wavefront_index_t b);
 
-bool unique_index(edit_wavefront_index_t a, edit_wavefront_index_t b)
-{
-  return(a.segment_index==b.segment_index && a.diagonal_index==b.diagonal_index);
-}
+bool edit_unique_index(edit_wavefront_index_t a, edit_wavefront_index_t b);
+
+void edit_sort(edit_wavefront_index_t* begin, edit_wavefront_index_t* end);
+
+edit_wavefront_index_t* edit_unique(edit_wavefront_index_t* first, edit_wavefront_index_t* last);
 
 // Add Index
-#define EDIT_ADD_INDEX(index_set, index_num, k_num, v_num, offset_num, full_num) edit_wavefront_index_t new_index= {k_num, v_num, offset_num, full_num};index_set[index_num++]=new_index;
+#define EDIT_ADD_INDEX(index_set, index_num, k_num, v_num, offset_num, full_num) index_set[index_num].diagonal_index = k_num; index_set[index_num].segment_index = v_num; index_set[index_num].offset = offset_num; index_set[index_num].full = full_num;index_num++;
 
+#endif

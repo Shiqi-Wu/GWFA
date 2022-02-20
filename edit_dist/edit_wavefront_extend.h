@@ -1,7 +1,7 @@
 // DESCRIPTION: Wavefront extend on unit cost
 
-#include "edit_dist/edit_wavefront.h"
-#include "utils/string_padded.h"
+#include "edit_wavefront.h"
+#include "../utils/string_padded.h"
 
 #ifndef EDIT_WAVEFRONT_EXTEND_H_
 #define EDIT_WAVEFRONT_EXTEND_H_

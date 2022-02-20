@@ -7,9 +7,9 @@
 /*
  * Includes
  */
-#include "utils/commons.h"
-#include "system/mm_allocator.h"
-#include "utils/graph_struct.h"
+#include "../utils/commons.h"
+#include "../system/mm_allocator.h"
+#include "../utils/graph_struct.h"
 
 /*
  * Strings Padded

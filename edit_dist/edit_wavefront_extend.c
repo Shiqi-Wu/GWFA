@@ -1,6 +1,6 @@
 // DESCRIPTION: Wavefront extend on unit cost
 
-#include "edit_dist/edit_wavefront_extend.h"
+#include "edit_wavefront_extend.h"
 
 void edit_wavefront_extend(
     edit_wavefronts_t* const edit_wavefronts,
@@ -12,9 +12,10 @@ void edit_wavefront_extend(
         edit_wavefront_index_t* aft_idx = edit_wavefronts->index_set_null;
         int n = edit_wavefronts->index_set_num;
         int aft_num = 0;
-        while (n > 0)
+        int t = 0;
+        while (t < n)
         {
-            edit_wavefront_index_t index = pre_idx[--n];
+            edit_wavefront_index_t index = pre_idx[t++];
             if (index.full)
             {
                 aft_idx[aft_num++] = index;
@@ -25,13 +26,13 @@ void edit_wavefront_extend(
             int offset = index.offset;
             int i =EDIT_WAVEFRONT_I(k,offset);
             int h = EDIT_WAVEFRONT_H(k,offset);
-            if (h >= edit_wavefronts->text_length)
+            if (h > edit_wavefronts->text_length)
             {
                 aft_idx[aft_num++] = index;
                 continue;
             }
-            const char* segment = graph->node[v].pattern_padded_buffer;
-            if (i < edit_wavefronts->graph->node[v].pattern_length)
+            const char* segment = graph->node[v].pattern_padded;
+            if (i < edit_wavefronts->graph->node[v].pattern_length - 1)
             {
                 // Fetch pattern/text blocks
                 uint64_t* pattern_blocks = (uint64_t*)(segment+i);
@@ -57,7 +58,8 @@ void edit_wavefront_extend(
                 const int equal_chars = DIV_FLOOR(equal_right_bits,8);
                 // Increment offset
                 index.offset += equal_chars;
-                if (index.offset == edit_wavefronts->graph->node[v].pattern_length)
+                offset = index.offset;
+                if (index.offset == edit_wavefronts->graph->node[v].pattern_length - 1)
                 {
                     pre_idx[n++] = index;
                 }
@@ -70,25 +72,27 @@ void edit_wavefront_extend(
                         {
                             case 3: {
                                 aft_idx[aft_num - 2].offset = MAX(aft_idx[aft_num - 2].offset, index.offset);
-                                aft_idx[aft_num - 1].offset = MAX(aft_idx[aft_num - 1].offset, index.offset);
+                                aft_idx[aft_num - 1].offset = MAX(aft_idx[aft_num - 1].offset + 1, index.offset);
                                 aft_idx[aft_num - 1].full = aft_idx[aft_num - 1].full | index.full;
                                 EDIT_ADD_INDEX(aft_idx, aft_num, k + 1, v, offset + 1, false);
                                 break;
                             }
                             case 2: {
                                 aft_idx[aft_num - 2].offset = MAX(aft_idx[aft_num - 2].offset, index.offset);
+                                index.offset ++;
                                 aft_idx[aft_num++] = index;
                                 EDIT_ADD_INDEX(aft_idx, aft_num, k + 1, v, offset + 1, false);
                                 break;
                             }
                             case 1: {
-                                aft_idx[aft_num - 1].offset = MAX(aft_idx[aft_num - 1].offset, index.offset);
+                                aft_idx[aft_num - 1].offset = MAX(aft_idx[aft_num - 1].offset, index.offset + 1);
                                 aft_idx[aft_num - 1].full = aft_idx[aft_num - 1].full | index.full;
                                 EDIT_ADD_INDEX(aft_idx, aft_num, k - 1, v, offset, false);
                                 EDIT_ADD_INDEX(aft_idx, aft_num, k + 1, v, offset + 1, false);
                             }
                             case 0:{
                                 EDIT_ADD_INDEX(aft_idx, aft_num, k - 1, v, offset, false);
+                                index.offset++;
                                 aft_idx[aft_num++] = index;
                                 EDIT_ADD_INDEX(aft_idx, aft_num, k + 1, v, offset + 1, false);
                             }
@@ -97,6 +101,7 @@ void edit_wavefront_extend(
                     else
                     {
                         EDIT_ADD_INDEX(aft_idx, aft_num, k - 1, v, offset, false);
+                        index.offset ++;
                         aft_idx[aft_num++] = index;
                         EDIT_ADD_INDEX(aft_idx, aft_num, k + 1, v, offset + 1, false);
                     }
@@ -129,14 +134,15 @@ void edit_wavefront_extend(
             }
         }
         // Sort
-        Sort(aft_idx, aft_idx + aft_num, sort_index);
-        aft_num = unique(aft_idx, aft_num + aft_num, unique_index) - (int)aft_idx;
+        edit_sort(aft_idx, aft_idx + aft_num);
+        aft_num = edit_unique(aft_idx, aft_idx + aft_num) - aft_idx;
+        // printf('%d\n', aft_num);
         // update visited
         for (int j = 0; j < aft_num; j++)
         {
             int v = aft_idx[j].segment_index;
             int k = aft_idx[j].diagonal_index;
-            edit_wavefronts->visit[v][k] = true;
+            edit_wavefronts->visit[v][k + edit_wavefronts->graph->node[v].pattern_length - 1] = true;
         }
         // Exchange
         edit_wavefronts->index_set = aft_idx;

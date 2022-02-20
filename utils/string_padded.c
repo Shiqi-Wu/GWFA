@@ -37,8 +37,9 @@ strings_padded_t* strings_padded_new_rhomb(
   strings_padded_t* const strings_padded = 
       mm_allocator_alloc(mm_allocator,strings_padded_t);
   strings_padded->mm_allocator = mm_allocator;
+  strings_padded->graph_padded = mm_allocator_alloc(mm_allocator,graph_padded_t);
   strings_padded->graph_padded->node_num = graph->node_num;
-  strings_padded->graph_padded->node = mm_alllocator_malloc(mm_allocator, sizeof(segment_padded_t)*graph->node_num);
+  strings_padded->graph_padded->node = mm_allocator_malloc(mm_allocator, sizeof(segment_padded_t)*graph->node_num);
   // Compute padding dimensions
   const int pattern_begin_padding_length = text_length + padding_length;
   // const int pattern_end_padding_length = pattern_length + text_length + padding_length;

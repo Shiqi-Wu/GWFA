@@ -1,5 +1,5 @@
 // DESCRIPTION: Graph Wavefront alignment algorithm for unit cost
-#include "edit_dist/edit_wavefront.h"
+#include "edit_wavefront.h"
 
 edit_wavefronts_t* edit_wavefronts_new(
     const int pattern_length,
@@ -59,4 +59,58 @@ void edit_wavefronts_delete(edit_wavefronts_t* const edit_wavefronts)
     mm_allocator_free(mm_allocator, edit_wavefronts->visit);
     // Free hanlder
     mm_allocator_free(mm_allocator, edit_wavefronts);
+}
+
+/*
+Sort index
+*/
+bool edit_sort_index(edit_wavefront_index_t a, edit_wavefront_index_t b)
+{
+    if (a.segment_index<b.segment_index)
+      return true;
+    else if (a.segment_index==b.segment_index && a.diagonal_index<b.diagonal_index)
+      return true;
+    else if (a.segment_index==b.segment_index && a.diagonal_index==b.diagonal_index && a.offset>b.offset)
+      return true;
+    else
+      return false;
+}
+
+bool edit_unique_index(edit_wavefront_index_t a, edit_wavefront_index_t b)
+{
+  return(a.segment_index==b.segment_index && a.diagonal_index==b.diagonal_index);
+}
+
+
+void edit_sort(edit_wavefront_index_t* begin, edit_wavefront_index_t* end)
+{
+  edit_wavefront_index_t* p = begin; edit_wavefront_index_t temp;
+  int n = end - begin;
+  int i,j;
+  for (i = 0; i < n; ++i)
+  {
+    for (j = 0; j < n - i - 1; ++j){
+      if (!edit_sort_index(*p,*(p+1)))
+      {
+        temp = *(p+1);
+        *(p+1) = *p;
+        *p = temp;
+      }
+      p++;
+    }
+    p = begin;
+  }
+}
+
+edit_wavefront_index_t* edit_unique(edit_wavefront_index_t* first, edit_wavefront_index_t* last)
+{
+  if (first==last)
+    return last; 
+  edit_wavefront_index_t* result = first;
+  while (++first != last)
+  {
+  if (!edit_unique_index(*result,*first))   
+	  *(++result)=*first;
+  }
+  return ++result;
 }

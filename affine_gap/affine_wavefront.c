@@ -9,7 +9,7 @@ void affine_wavefronts_allocate_wavefront_null(affine_wavefronts_t* const affine
     affine_wavefronts->wavefront_null.null = true;
     affine_wavefronts->wavefront_null.offsets = offsets_null;
     int i;
-    for (i=0;i<wavefront_length;++i){
+    for (i=0;i < wavefront_length;++i){
         offsets_null[i] = AFFINE_WAVEFRONT_OFFSET_NULL;
     }
 }

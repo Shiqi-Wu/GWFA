@@ -1,4 +1,3 @@
-//DESCRIPTION: 
 
 #include "affine_wavefront.h"
 

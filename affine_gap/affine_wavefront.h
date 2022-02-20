@@ -3,10 +3,10 @@
 #ifndef AFFINE_WAVEFRONT_H_
 #define AFFINE_WAVEFRONT_H_
 
-#include "utils/commons.h"
-#include "utils/graph_struct.h"
-#include "system/mm_allocator.h"
-#include "affine_gap/affine_wavefront_penalties.h"
+#include "../utils/commons.h"
+#include "../utils/graph_struct.h"
+#include "../system/mm_allocator.h"
+#include "../affine_gap/affine_wavefront_penalties.h"
 
 /*
 Debug
