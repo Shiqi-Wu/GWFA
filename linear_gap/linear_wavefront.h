@@ -62,9 +62,16 @@ typedef struct{
 } linear_wavefront_node_indexs_t;
 */
 
+typedef_struct{
+  linear_wavefront_t* in_gwavefront;     // in-wavefront for gap
+  linear_wavefront_t* in_mwavefront;     // in-wavefront for mismatch
+  linear_wavefront_t* out_wavefront;     // out-wavefront
+} linear_wavefront_set;
+
 typedef struct{
   int hi,lo;
   awf_offset_t* offsets;
+  bool null;
 } linear_wavefront_t;
 
 typedef struct{
@@ -82,10 +89,16 @@ typedef struct{
   // Nodes in computation
   int* node;
   int node_num;
+  bool* node_status;
   // Finalization
   bool final_status;
-  // Position table
-  int** visit;
 } linear_wavefronts_t;
 
+int transp(int k)
+{
+  if (k > 0)
+    return (k*2-1)
+  else
+    return (-2*k)
+}
 #endif

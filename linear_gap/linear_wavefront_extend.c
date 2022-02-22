@@ -62,10 +62,6 @@ void linear_wavefronts_extend_graph(
                 idx_set->idx[idx_set->idx_num].segment_index = w;
                 idx_set->idx[idx_set->idx_num].offset = 0;
                 idx_set->idx_num++;
-                idx_set->idx[idx_set->idx_num].diagonal_index = h - 1;
-                idx_set->idx[idx_set->idx_num].segment_index = w;
-                idx_set->idx[idx_set->idx_num].offset = 0;
-                idx_set->idx_num++;
             }
         }
     }
@@ -126,8 +122,7 @@ void linear_wavefronts_extend_wavefront_compute_packed(
                 }
                 case 1:
                 {
-                    printf("error: hi is smaller than lo on diagonal idx %d, node idx %d", k, node_idx);
-                    return;
+                    continue;
                 }
                 case 2:
                 {
@@ -263,6 +258,13 @@ void linear_wavefronts_extend_wavefront_compute_packed(
             node_idx = idx_set->idx[n].segment_index;
             k = idx_set->idx[n].diagonal_index;
             offset = idx_set->idx[n].offset;
-            
+            if (wavefront[node_idx].hi<wavefront[node_idx].lo && !linear_wavefronts->node_status[node_idx])
+            {
+                linear_wavefronts->node[node_num++] = node_idx;
+                linear_wavefronts->node_status[node_idx] = true;
+            }
+            k > 0 ? wavefront[node_idx].offsets[2*k-1] = MAX(offset,wavefront[node_idx].offsets[2*k-1]):wavefront[node_idx].offsets[-2*k] = MAX(offset,wavefront[node_idx].offsets[-2*k]);
+            wavefront[node_idx].hi = MAX(k, wavefront[node_idx].hi);
+            wavefront[node_idx].lo = MIN(k, wavefront[node_idx].lo);
         }
     }

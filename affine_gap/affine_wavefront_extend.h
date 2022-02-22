@@ -15,6 +15,8 @@
  * Gap-Affine Wavefront exact extension
  */
 
+
+
 void affine_wavefronts_extend_mwavefront_compute_packed(
     affine_wavefronts_t* const affine_wavefronts,
     const char* const text,
