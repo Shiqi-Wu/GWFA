@@ -81,17 +81,20 @@ typedef struct{
   // Limits
   int max_penalty;    // MAX(mismatch_penalty,single_gap_penalty)
   // Wavefront
+  int num_wavefronts;
   linear_wavefront_t** wavefronts;
   // Penalties
-  linear_wavefront_penalty_t penalties;
+  linear_wavefront_penalty_t* penalties;
   // Index set for extend
-  linear_wavefront_indexs_t idx_set;
+  linear_wavefront_indexs_t* idx_set;
   // Nodes in computation
   int* node;
   int node_num;
   bool* node_status;
   // Finalization
   bool final_status;
+  // MM
+  mm_allocator_t* mm_allocator;
 } linear_wavefronts_t;
 
 int transp(int k)
